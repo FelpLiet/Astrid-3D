@@ -3,6 +3,7 @@
 #define TARGET_FPS 60
 
 spc::planeta newPlaneta(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f));
+spc::camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
 
 GLFWwindow *window;
 GLFWmonitor *monitor;
@@ -35,6 +36,8 @@ int initWindow()
 
     glfwMakeContextCurrent(window);
 
+    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+    glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetMouseButtonCallback(window, mouse_button_callback);
 
     monitor = glfwGetPrimaryMonitor();
@@ -78,6 +81,13 @@ void drawScene(GLFWwindow *window)
 
     glClear(GL_COLOR_BUFFER_BIT);
 
+
+    // Set up the view matrix
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    camera.lookAt();
+
+
     newPlaneta.draw();
 
 
@@ -111,12 +121,36 @@ void update(GLFWwindow *window)
    
 }
 
-void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
     {
-     
+        camera.setCursorMode(window, GLFW_CURSOR_DISABLED);
     }
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    static double lastX = 0.0, lastY = 0.0;
+    static bool firstMouse = true;
+
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    double xoffset = xpos - lastX;
+    double yoffset = lastY - ypos; // Reversed since y-coordinates go from bottom to top
+    lastX = xpos;
+    lastY = ypos;
+
+    float sensitivity = 0.1f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    camera.rotate(xoffset, yoffset);
 }
 
 void aspecRatio(GLFWwindow *window)
