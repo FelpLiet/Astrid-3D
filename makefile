@@ -14,7 +14,7 @@ HEADER_FILES = $(wildcard $(INCLUDE_DIR)/*.hpp)
 OBJECT_FILES = $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SOURCE_FILES))
 
 # Libraries
-LIBS = -lglfw -lSOIL -lGLEW -lGL
+LIBS = -lglfw -lSOIL -lGLEW -lGL -lGLU
 
 # Executable
 TARGET = astrid3d
