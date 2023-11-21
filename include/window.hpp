@@ -1,7 +1,7 @@
 #pragma once
 
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include <GL/glut.h>
 #include <glm/glm.hpp>
 #include <iostream>
 #include <map>
@@ -11,18 +11,14 @@
 #include "espaco.hpp"
 #include "asteroide.hpp"
 
-struct key
-{
-    bool curr;
-    bool prev;
-};
+#define WIDTH 1366
+#define HEIGHT 768
 
-int initWindow();
 void runAstrid();
-void input(GLFWwindow *window);
-void drawScene(GLFWwindow *window);
+void input(unsigned char key, int x, int y);
+void drawScene();
 //void reshapeWindow(GLFWwindow *window, int width, int height);
-void update(GLFWwindow *window);
-void mouse_button_callback(GLFWwindow *window, int button, int action, int mods);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void aspecRatio(GLFWwindow *window);
+void update();
+void mouse_button_callback(int button, int state, int x, int y);
+void mouse_callback(int x, int y);
+void resize_callback(int x, int y);
