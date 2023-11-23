@@ -1,5 +1,8 @@
 #include "../include/window.hpp"
 
+spc::espaco* espaco = nullptr;
+spc::planeta* planetaTerra = nullptr;
+
 int main(int argc, char **argv)
 {
     glutInit(&argc, argv);
@@ -9,11 +12,13 @@ int main(int argc, char **argv)
     glutCreateWindow("Astrid");
 
     glutDisplayFunc(drawScene);
-    glutIdleFunc(update);
     glutKeyboardFunc(input);
     glutReshapeFunc(resize_callback);
-    // glutPassiveMotionFunc(mouse_callback);
-    // glutMouseFunc(mouse_button_callback);
+    glutPassiveMotionFunc(mouseMotion);
+    glutTimerFunc(0, update, 0);
+
+    espaco = new spc::espaco(50.0f, "assets/espaco.png");
+    planetaTerra = new spc::planeta(glm::vec3(10.0f, 0.0f, -10.0f), glm::vec3(5.0f, 5.0f, 5.0f), "assets/terra.png");
 
     glutMainLoop();
 
