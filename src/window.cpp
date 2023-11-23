@@ -1,4 +1,5 @@
 #include "../include/window.hpp"
+#include "../include/disparo.hpp"
 
 bool running = true, fullscreen;
 
@@ -10,6 +11,8 @@ GLfloat yaw = 0.0f, pitch = 0.0f; // Camera speed
 // spc::planeta planetaTerra(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, -1.0f), "assets/wesley.jpg");
 extern spc::espaco *espaco;
 extern spc::planeta *planetaTerra;
+
+std::vector<spc::disparo> disparos;
 
 void input(unsigned char key, int x, int y)
 {
@@ -74,6 +77,22 @@ void input(unsigned char key, int x, int y)
     }
 }
 
+void mouseButton(int button, int state, int x, int y)
+{
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+    {
+        disparar();
+    }
+}
+
+void disparar()
+{
+    glm::vec3 direcaoDisparo = glm::normalize(glm::vec3(lookX, lookY, lookZ));
+
+    spc::disparo novoDisparo(glm::vec3(cameraX, cameraY, cameraZ), direcaoDisparo);
+    disparos.push_back(novoDisparo);
+}
+
 void drawScene()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -86,13 +105,18 @@ void drawScene()
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glClearDepth(1.0f);
-    
+
     glPushMatrix();
     glTranslatef(cameraX, cameraY, cameraZ);
     espaco->draw();
     glPopMatrix();
 
     planetaTerra->draw();
+
+    for (const auto &disparo : disparos)
+    {
+        disparo.draw();
+    }
 
     glutSwapBuffers();
 }
@@ -101,6 +125,18 @@ void update(int)
 {
     glutPostRedisplay();
     planetaTerra->updateRotation(1.0f);
+    for (auto it = disparos.begin(); it != disparos.end();)
+    {
+        it->updatePointStatus();
+        if (!it->isAlive())
+        {
+            it = disparos.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
     glutTimerFunc(1000 / FPS, update, 0);
 }
 

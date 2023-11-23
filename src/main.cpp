@@ -1,7 +1,7 @@
 #include "../include/window.hpp"
 
-spc::espaco* espaco = nullptr;
-spc::planeta* planetaTerra = nullptr;
+spc::espaco *espaco = nullptr;
+spc::planeta *planetaTerra = nullptr;
 
 int main(int argc, char **argv)
 {
@@ -15,6 +15,7 @@ int main(int argc, char **argv)
     glutKeyboardFunc(input);
     glutReshapeFunc(resize_callback);
     glutPassiveMotionFunc(mouseMotion);
+    glutMouseFunc(mouseButton);
     glutTimerFunc(0, update, 0);
 
     espaco = new spc::espaco(50.0f, "assets/espaco.png");
