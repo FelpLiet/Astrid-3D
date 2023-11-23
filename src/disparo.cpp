@@ -12,7 +12,7 @@ namespace spc
         // Ajuste a posição inicial para evitar que o disparo fique dentro da câmera
         glm::vec3 posicaoAjustada = position + 0.1f * direction;
 
-        //glColor3f(1.0f, 0.0f, 0.0f); // Configura a cor antes de começar o desenho
+        glColor3f(1.0f, 0.0f, 0.0f); // Configura a cor antes de começar o desenho
         glBegin(GL_TRIANGLE_FAN);
         glVertex3f(posicaoAjustada.x, posicaoAjustada.y, posicaoAjustada.z);
 

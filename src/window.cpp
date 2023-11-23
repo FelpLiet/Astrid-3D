@@ -106,17 +106,21 @@ void drawScene()
     glDepthFunc(GL_LEQUAL);
     glClearDepth(1.0f);
 
-    glPushMatrix();
-    glTranslatef(cameraX, cameraY, cameraZ);
-    espaco->draw();
-    glPopMatrix();
-
-    planetaTerra->draw();
-
     for (const auto &disparo : disparos)
     {
         disparo.draw();
     }
+    
+    glPushMatrix();
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glTranslatef(cameraX, cameraY, cameraZ);
+    espaco->draw();
+    glPopMatrix();
+
+    glPushMatrix();
+    glColor3f(1.0f, 1.0f, 1.0f);
+    planetaTerra->draw();
+    glPopMatrix();
 
     glutSwapBuffers();
 }
