@@ -4,6 +4,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <vector>
+#include <glm/gtc/type_ptr.hpp>
 #include <SOIL/SOIL.h>
 #include "textura.hpp"
 
@@ -17,6 +19,11 @@ namespace spc
         glm::vec3 size;
         glm::vec3 rotation;
         GLuint texture;
+        GLfloat raio = 0.5f;
+        GLuint nStacks = 50;
+        GLuint nSectors = 50;
+
+        
 
     public:
         /*
