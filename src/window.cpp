@@ -3,6 +3,7 @@
 
 bool running = true, fullscreen;
 
+//TODO implementar camera na classe
 GLfloat cameraX = 0.0f, cameraY = 0.0f, cameraZ = 5.0f; // Camera position
 GLfloat lookX = 0.0f, lookY = 0.0f, lookZ = -1.0f;      // Direction the camera is looking
 int speed = 1;
@@ -34,10 +35,7 @@ void drawScene()
     glDepthFunc(GL_LEQUAL);
     glClearDepth(1.0f);
 
-    for (const auto &disparo : disparos)
-    {
-        disparo.draw();
-    }
+    spc::drawDisparos(disparos);
     
     glPushMatrix();
     glColor3f(1.0f, 1.0f, 1.0f);
@@ -57,18 +55,7 @@ void update(int)
 {
     glutPostRedisplay();
     planetaTerra->updateRotation(1.0f);
-    for (auto it = disparos.begin(); it != disparos.end();)
-    {
-        it->updatePointStatus();
-        if (!it->isAlive())
-        {
-            it = disparos.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
-    }
+    spc::verificaDisparos(disparos);
     glutTimerFunc(1000 / FPS, update, 0);
 }
 
@@ -80,7 +67,7 @@ void resize_callback(int x, int y)
     glLoadIdentity();
     gluPerspective(40.0, (GLdouble)x / (GLdouble)y, 0.5, 50.0);
     glMatrixMode(GL_MODELVIEW);
-    glViewport(0, 0, x, y); // renderiza en toda la ventana
+    glViewport(0, 0, x, y);
 }
 
 void input(unsigned char key, int x, int y)
@@ -148,23 +135,20 @@ void input(unsigned char key, int x, int y)
 
 void mouseMotion(int x, int y)
 {
-    static int lastX = -1, lastY = -1; // Last mouse position
+    static int lastX = -1, lastY = -1; 
     if (lastX == -1)
-        lastX = x; // Initialize lastX and lastY
+        lastX = x; 
     if (lastY == -1)
         lastY = y;
 
-    // Calculate mouse movement
     int dx = x - lastX;
     int dy = y - lastY;
 
-    // Update yaw and pitch
-    const float sensitivity = 0.007f; // Adjust this value as needed
+    const float sensitivity = 0.007f;
     yaw += dx * sensitivity;
     pitch -= dy * sensitivity;
 
     // Limit pitch to avoid flipping the camera upside down
-    std::cout << "yaw: " << yaw << " pitch: " << pitch << std::endl;
     if (pitch > 1.0f)
         pitch = 1.0f;
     if (pitch < -1.0f)
@@ -180,6 +164,7 @@ void mouseMotion(int x, int y)
     lastY = y;
 }
 
+//TODO colocar o disparar na classe
 void disparar()
 {
     glm::vec3 direcaoDisparo = glm::normalize(glm::vec3(lookX, lookY, lookZ));

@@ -18,7 +18,7 @@ int main(int argc, char **argv)
     glutMouseFunc(mouseButton);
     glutTimerFunc(0, update, 0);
 
-    espaco = new spc::espaco(50.0f, "assets/espaco.png");
+    espaco = new spc::espaco(50.0f, "assets/espaco.jpg");
     planetaTerra = new spc::planeta(glm::vec3(10.0f, 0.0f, -10.0f), glm::vec3(5.0f, 5.0f, 5.0f), "assets/earth.jpg");
 
     glutMainLoop();

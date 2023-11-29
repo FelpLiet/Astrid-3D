@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <iostream>
 #include <chrono>
+#include <vector>
 
 namespace spc
 {
@@ -44,6 +45,10 @@ namespace spc
         {
             return timeCreated;
         }
+
     };
 
+    void verificaDisparos(std::vector<spc::disparo> &disparos);
+
+    void drawDisparos(const std::vector<spc::disparo> &disparos);
 }

@@ -39,4 +39,27 @@ namespace spc
         return std::chrono::duration_cast<std::chrono::seconds>(currentTime - timeCreated).count() < 1;
     }
 
+    void verificaDisparos(std::vector<spc::disparo> &disparos)
+    {
+        for (auto it = disparos.begin(); it != disparos.end();)
+        {
+            it->updatePointStatus();
+            if (!it->isAlive())
+            {
+                it = disparos.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+    }
+
+    void drawDisparos(const std::vector<spc::disparo> &disparos)
+    {
+        for (const auto &disparo : disparos)
+        {
+            disparo.draw();
+        }
+    }
 }
