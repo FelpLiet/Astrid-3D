@@ -8,74 +8,10 @@ GLfloat lookX = 0.0f, lookY = 0.0f, lookZ = -1.0f;      // Direction the camera 
 int speed = 1;
 GLfloat yaw = 0.0f, pitch = 0.0f; // Camera speed
 
-// spc::planeta planetaTerra(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, -1.0f), "assets/wesley.jpg");
 extern spc::espaco *espaco;
 extern spc::planeta *planetaTerra;
 
 std::vector<spc::disparo> disparos;
-
-void input(unsigned char key, int x, int y)
-{
-    switch (key)
-    {
-    case 27:
-        exit(0);
-        break;
-    case 'f':
-    case 'F':
-        fullscreen = !fullscreen;
-        if (fullscreen)
-            glutFullScreen();
-        else
-            glutReshapeWindow(1366, 768);
-        break;
-    case 'w':
-        // Move forward
-        // std::cout << "w" << std::endl;
-        cameraX += lookX * speed;
-        cameraY += lookY * speed;
-        cameraZ += lookZ * speed;
-        break;
-    case 's':
-        // Move backward
-        // std::cout << "s" << std::endl;
-        cameraX -= lookX * speed;
-        cameraY -= lookY * speed;
-        cameraZ -= lookZ * speed;
-        break;
-    case 'a':
-        // Strafe left
-        // std::cout << "a" << std::endl;
-        cameraX += lookZ * speed;
-        cameraZ -= lookX * speed;
-        break;
-    case 'd':
-        // Strafe right
-        // std::cout << "d" << std::endl;
-        cameraX -= lookZ * speed;
-        cameraZ += lookX * speed;
-        break;
-    case 'q':
-        // Move up
-        // std::cout << "q" << std::endl;
-        cameraY += speed;
-        break;
-    case 'e':
-        // Move down
-        // std::cout << "e" << std::endl;
-        cameraY -= speed;
-        break;
-    case 'm':
-        // Lock the mouse to the center of the screen
-        if (glutGet(GLUT_WINDOW_CURSOR) == GLUT_CURSOR_NONE)
-            glutSetCursor(GLUT_CURSOR_INHERIT);
-        else
-            glutSetCursor(GLUT_CURSOR_NONE);
-        break;
-    default:
-        break;
-    }
-}
 
 void mouseButton(int button, int state, int x, int y)
 {
@@ -83,14 +19,6 @@ void mouseButton(int button, int state, int x, int y)
     {
         disparar();
     }
-}
-
-void disparar()
-{
-    glm::vec3 direcaoDisparo = glm::normalize(glm::vec3(lookX, lookY, lookZ));
-
-    spc::disparo novoDisparo(glm::vec3(cameraX, cameraY, cameraZ), direcaoDisparo);
-    disparos.push_back(novoDisparo);
 }
 
 void drawScene()
@@ -155,6 +83,69 @@ void resize_callback(int x, int y)
     glViewport(0, 0, x, y); // renderiza en toda la ventana
 }
 
+void input(unsigned char key, int x, int y)
+{
+    switch (key)
+    {
+    case 27:
+        exit(0);
+        break;
+    case 'f':
+    case 'F':
+        fullscreen = !fullscreen;
+        if (fullscreen)
+            glutFullScreen();
+        else
+            glutReshapeWindow(1366, 768);
+        break;
+    case 'w':
+        // Move forward
+        // std::cout << "w" << std::endl;
+        cameraX += lookX * speed;
+        cameraY += lookY * speed;
+        cameraZ += lookZ * speed;
+        break;
+    case 's':
+        // Move backward
+        // std::cout << "s" << std::endl;
+        cameraX -= lookX * speed;
+        cameraY -= lookY * speed;
+        cameraZ -= lookZ * speed;
+        break;
+    case 'a':
+        // Strafe left
+        // std::cout << "a" << std::endl;
+        cameraX += lookZ * speed;
+        cameraZ -= lookX * speed;
+        break;
+    case 'd':
+        // Strafe right
+        // std::cout << "d" << std::endl;
+        cameraX -= lookZ * speed;
+        cameraZ += lookX * speed;
+        break;
+    case 'q':
+        // Move up
+        // std::cout << "q" << std::endl;
+        cameraY += speed;
+        break;
+    case 'e':
+        // Move down
+        // std::cout << "e" << std::endl;
+        cameraY -= speed;
+        break;
+    case 'm':
+        // Lock the mouse to the center of the screen
+        if (glutGet(GLUT_WINDOW_CURSOR) == GLUT_CURSOR_NONE)
+            glutSetCursor(GLUT_CURSOR_INHERIT);
+        else
+            glutSetCursor(GLUT_CURSOR_NONE);
+        break;
+    default:
+        break;
+    }
+}
+
 void mouseMotion(int x, int y)
 {
     static int lastX = -1, lastY = -1; // Last mouse position
@@ -187,4 +178,12 @@ void mouseMotion(int x, int y)
     // Update last mouse position
     lastX = x;
     lastY = y;
+}
+
+void disparar()
+{
+    glm::vec3 direcaoDisparo = glm::normalize(glm::vec3(lookX, lookY, lookZ));
+
+    spc::disparo novoDisparo(glm::vec3(cameraX, cameraY, cameraZ), direcaoDisparo);
+    disparos.push_back(novoDisparo);
 }

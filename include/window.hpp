@@ -14,9 +14,9 @@
 #define HEIGHT 768
 #define FPS 60
 
-void input(unsigned char key, int x, int y);
 void drawScene();
 void update(int);
+void input(unsigned char key, int x, int y);
 // void mouse_button_callback(int button, int state, int x, int y);
 // void mouse_callback(int x, int y);
 void resize_callback(int x, int y);
