@@ -5,7 +5,6 @@
 #include <iostream>
 #include <SOIL/SOIL.h>
 
-
 namespace spc
 {
 
@@ -18,14 +17,22 @@ namespace spc
         unsigned char *image;
         GLuint texture;
 
-        void loadTexture(const char *filename);
+        // void loadTexture(const char *filename);
 
     public:
-        textura(const char *filename) {
-            loadTexture(filename);
-        }
-        ~textura(){
-            glDeleteTextures(1, &texture);
+        textura(const char *filename)
+        {
+            texture = SOIL_load_OGL_texture(filename, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+            if (texture == 0)
+            {
+                std::cout << "Error loading texture " << filename << std::endl;
+            }
+            
+            image = SOIL_load_image(filename, &width, &height, &channels, SOIL_LOAD_AUTO);
+            if (image == 0)
+            {
+                std::cout << "Error loading image " << filename << std::endl;
+            }
         }
 
         int getWidth() { return width; }

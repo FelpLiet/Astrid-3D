@@ -1,179 +1,190 @@
 #include "../include/window.hpp"
-
-#define TARGET_FPS 60
-
-spc::planeta newPlaneta(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f));
-spc::camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
-
-GLFWwindow *window;
-GLFWmonitor *monitor;
-
-std::map<int, key> keyMap;
+#include "../include/disparo.hpp"
 
 bool running = true, fullscreen;
-int WIDTH = 1366, HEIGHT = 768;
 
-int initWindow()
+GLfloat cameraX = 0.0f, cameraY = 0.0f, cameraZ = 5.0f; // Camera position
+GLfloat lookX = 0.0f, lookY = 0.0f, lookZ = -1.0f;      // Direction the camera is looking
+int speed = 1;
+GLfloat yaw = 0.0f, pitch = 0.0f; // Camera speed
+
+// spc::planeta planetaTerra(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, -1.0f), "assets/wesley.jpg");
+extern spc::espaco *espaco;
+extern spc::planeta *planetaTerra;
+
+std::vector<spc::disparo> disparos;
+
+void input(unsigned char key, int x, int y)
 {
-    if (!glfwInit())
+    switch (key)
     {
-        std::cerr << "Erro ao inicializar o GLFW" << std::endl;
-        return -1;
-    }
-    glfwWindowHint(GLFW_SAMPLES, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
-
-    window = glfwCreateWindow(WIDTH, HEIGHT, "ASTRID-3D", nullptr, nullptr);
-    if (!window)
-    {
-        std::cerr << "Erro ao criar a janela GLFW" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-
-    glfwMakeContextCurrent(window);
-
-    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-    glfwSetCursorPosCallback(window, mouse_callback);
-    glfwSetMouseButtonCallback(window, mouse_button_callback);
-
-    monitor = glfwGetPrimaryMonitor();
-    running = true;
-    fullscreen = false;
-
-    // Inicializa GLEW
-    if (glewInit() != GLEW_OK)
-    {
-        std::cerr << "Erro ao inicializar o GLEW" << std::endl;
-        return -1;
-    }
-
-    return 0;
-}
-
-void input(GLFWwindow *window)
-{
-    glfwPollEvents();
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    {
-        running = false;
-        glfwWindowShouldClose(window);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS && keyMap[GLFW_KEY_F].prev)
-    {
-        glfwWaitEventsTimeout(0.7);
-        if (!fullscreen)
-            glfwSetWindowMonitor(window, monitor, 0, 0, WIDTH, HEIGHT, 0);
-        if (fullscreen)
-            glfwSetWindowMonitor(window, NULL, 0, 0, WIDTH, HEIGHT, 0);
+    case 27:
+        exit(0);
+        break;
+    case 'f':
+    case 'F':
         fullscreen = !fullscreen;
+        if (fullscreen)
+            glutFullScreen();
+        else
+            glutReshapeWindow(1366, 768);
+        break;
+    case 'w':
+        // Move forward
+        // std::cout << "w" << std::endl;
+        cameraX += lookX * speed;
+        cameraY += lookY * speed;
+        cameraZ += lookZ * speed;
+        break;
+    case 's':
+        // Move backward
+        // std::cout << "s" << std::endl;
+        cameraX -= lookX * speed;
+        cameraY -= lookY * speed;
+        cameraZ -= lookZ * speed;
+        break;
+    case 'a':
+        // Strafe left
+        // std::cout << "a" << std::endl;
+        cameraX += lookZ * speed;
+        cameraZ -= lookX * speed;
+        break;
+    case 'd':
+        // Strafe right
+        // std::cout << "d" << std::endl;
+        cameraX -= lookZ * speed;
+        cameraZ += lookX * speed;
+        break;
+    case 'q':
+        // Move up
+        // std::cout << "q" << std::endl;
+        cameraY += speed;
+        break;
+    case 'e':
+        // Move down
+        // std::cout << "e" << std::endl;
+        cameraY -= speed;
+        break;
+    case 'm':
+        // Lock the mouse to the center of the screen
+        if (glutGet(GLUT_WINDOW_CURSOR) == GLUT_CURSOR_NONE)
+            glutSetCursor(GLUT_CURSOR_INHERIT);
+        else
+            glutSetCursor(GLUT_CURSOR_NONE);
+        break;
+    default:
+        break;
     }
-    keyMap[GLFW_KEY_F].prev = glfwGetKey(window, GLFW_KEY_F);
 }
 
-void drawScene(GLFWwindow *window)
+void mouseButton(int button, int state, int x, int y)
 {
-    aspecRatio(window);
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+    {
+        disparar();
+    }
+}
 
-    glClear(GL_COLOR_BUFFER_BIT);
+void disparar()
+{
+    glm::vec3 direcaoDisparo = glm::normalize(glm::vec3(lookX, lookY, lookZ));
 
+    spc::disparo novoDisparo(glm::vec3(cameraX, cameraY, cameraZ), direcaoDisparo);
+    disparos.push_back(novoDisparo);
+}
 
-    // Set up the view matrix
+void drawScene()
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    camera.lookAt();
+    gluLookAt(cameraX, cameraY, cameraZ,                         // Camera position
+              cameraX + lookX, cameraY + lookY, cameraZ + lookZ, // Look at point
+              0.0f, 1.0f, 0.0f);
 
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glClearDepth(1.0f);
 
-    newPlaneta.draw();
+    for (const auto &disparo : disparos)
+    {
+        disparo.draw();
+    }
+    
+    glPushMatrix();
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glTranslatef(cameraX, cameraY, cameraZ);
+    espaco->draw();
+    glPopMatrix();
 
+    glPushMatrix();
+    glColor3f(1.0f, 1.0f, 1.0f);
+    planetaTerra->draw();
+    glPopMatrix();
 
-    glfwSwapBuffers(window);
+    glutSwapBuffers();
 }
 
-void runAstrid()
+void update(int)
 {
-    initWindow();
-    newPlaneta.loadTexture("assets/wesley.jpg");
-
-    double lasttime = glfwGetTime();
-    while (running && !glfwWindowShouldClose(window))
+    glutPostRedisplay();
+    planetaTerra->updateRotation(1.0f);
+    for (auto it = disparos.begin(); it != disparos.end();)
     {
-        while (glfwGetTime() < lasttime + 1.0 / TARGET_FPS)
+        it->updatePointStatus();
+        if (!it->isAlive())
         {
-            // TODO: Put the thread to sleep, yield, or simply do nothing
+            it = disparos.erase(it);
         }
-        lasttime += 1.0 / TARGET_FPS;
-        input(window);
-        update(window);
-        drawScene(window);
+        else
+        {
+            ++it;
+        }
     }
-
-    glfwDestroyWindow(window);
-    glfwTerminate();
+    glutTimerFunc(1000 / FPS, update, 0);
 }
 
-void update(GLFWwindow *window)
+void resize_callback(int x, int y)
 {
-   
-}
-
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
-{
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
-    {
-        camera.setCursorMode(window, GLFW_CURSOR_DISABLED);
-    }
-}
-
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-    static double lastX = 0.0, lastY = 0.0;
-    static bool firstMouse = true;
-
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-
-    double xoffset = xpos - lastX;
-    double yoffset = lastY - ypos; // Reversed since y-coordinates go from bottom to top
-    lastX = xpos;
-    lastY = ypos;
-
-    float sensitivity = 0.1f;
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
-
-    camera.rotate(xoffset, yoffset);
-}
-
-void aspecRatio(GLFWwindow *window)
-{
-    // Set up the viewport
-    int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
-    glViewport(0, 0, width, height);
-
-    // Set up the projection matrix
+    if (y == 0 || x == 0)
+        return;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    float aspectRatio = (float)width / (float)height;
-    float size = 10.0f;
-    if (aspectRatio > 1.0f)
-    {
-        glOrtho(-size * aspectRatio, size * aspectRatio, -size, size, -1.0f, 1.0f);
-    }
-    else
-    {
-        glOrtho(-size, size, -size / aspectRatio, size / aspectRatio, -1.0f, 1.0f);
-    }
-
-    // Switch back to the modelview matrix
+    gluPerspective(40.0, (GLdouble)x / (GLdouble)y, 0.5, 50.0);
     glMatrixMode(GL_MODELVIEW);
+    glViewport(0, 0, x, y); // renderiza en toda la ventana
+}
+
+void mouseMotion(int x, int y)
+{
+    static int lastX = -1, lastY = -1; // Last mouse position
+    if (lastX == -1)
+        lastX = x; // Initialize lastX and lastY
+    if (lastY == -1)
+        lastY = y;
+
+    // Calculate mouse movement
+    int dx = x - lastX;
+    int dy = y - lastY;
+
+    // Update yaw and pitch
+    const float sensitivity = 0.007f; // Adjust this value as needed
+    yaw += dx * sensitivity;
+    pitch -= dy * sensitivity;
+
+    // Limit pitch to avoid flipping the camera upside down
+    std::cout << "yaw: " << yaw << " pitch: " << pitch << std::endl;
+    if (pitch > 1.0f)
+        pitch = 1.0f;
+    if (pitch < -1.0f)
+        pitch = -1.0f;
+
+    // Update camera direction
+    lookX = cos(yaw) * cos(pitch);
+    lookY = sin(pitch);
+    lookZ = sin(yaw) * cos(pitch);
+
+    // Update last mouse position
+    lastX = x;
+    lastY = y;
 }

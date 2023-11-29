@@ -2,50 +2,153 @@
 
 namespace spc
 {
-    planeta::planeta(glm::vec3 newPosition, glm::vec3 newSize)
-    {
-        position = newPosition;
-        size = newSize;
-
-    }
 
     planeta::~planeta()
     {
-        delete text;
     }
 
     void planeta::draw()
     {
+        
         glPushMatrix();
+        std::vector<std::vector<glm::vec3>> pontos;
+        std::vector<std::vector<glm::vec2>> texCoords;
+
+        const GLfloat TWO_PI = 2 * M_PI;
+
+        GLfloat deltaPhi = M_PI / nStacks;
+        GLfloat deltaTheta = TWO_PI / nSectors;
         glTranslatef(position.x, position.y, position.z);
         glScalef(size.x, size.y, size.z);
+        glRotatef(rotation.y, 0.0f, 1.0f, 0.0f);
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, text->getTexture());
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+        glBindTexture(GL_TEXTURE_2D, texture);
 
-        // Enable automatic texture coordinate generation
-        GLfloat sgen_params[] = {1.0f, 0.0f, 0.0f, 0.0f};
-        GLfloat tgen_params[] = {0.0f, 1.0f, 0.0f, 0.0f};
-        glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-        glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-        glTexGenfv(GL_S, GL_OBJECT_PLANE, sgen_params);
-        glTexGenfv(GL_T, GL_OBJECT_PLANE, tgen_params);
-        glEnable(GL_TEXTURE_GEN_S);
-        glEnable(GL_TEXTURE_GEN_T);
+        for (GLuint i = 0; i <= nStacks; i++)
+        {
+            GLfloat phi = -M_PI_2 + i * deltaPhi;
+            GLfloat r = raio * cos(phi);
+            GLfloat y = raio * sin(phi);
 
-        // Draw the sphere
-        GLUquadric *quad = gluNewQuadric();
-        gluQuadricTexture(quad, GL_TRUE);
-        gluSphere(quad, 1.0, 36, 18);
-        gluDeleteQuadric(quad);
+            std::vector<glm::vec3> pts;
+            std::vector<glm::vec2> texs;
 
-        glDisable(GL_TEXTURE_GEN_S);
-        glDisable(GL_TEXTURE_GEN_T);
+            for (GLuint j = 0; j <= nSectors; j++)
+            {
+                GLfloat theta = j * deltaTheta;
+                GLfloat x = r * sin(theta);
+                GLfloat z = r * cos(theta);
+
+                GLfloat s = theta / TWO_PI;
+                GLfloat t = phi / M_PI + 0.5;
+
+                pts.push_back(glm::vec3(x, y, z));
+                texs.push_back(glm::vec2(s, t));
+            } // next j
+            pontos.push_back(pts);
+            texCoords.push_back(texs);
+        } // next i
+        ;
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+        for (GLuint i = 0; i < nStacks; i++)
+        {
+            glBegin(GL_TRIANGLE_STRIP);
+
+            for (GLuint j = 0; j <= nSectors; j++)
+            {
+                glTexCoord2fv(glm::value_ptr(texCoords[i][j]));
+                glVertex3fv(glm::value_ptr(pontos[i][j]));
+                glTexCoord2fv(glm::value_ptr(texCoords[i + 1][j]));
+                glVertex3fv(glm::value_ptr(pontos[i + 1][j]));
+            }
+            glEnd();
+        }
+
+
         glDisable(GL_TEXTURE_2D);
         glPopMatrix();
     }
 
-    void planeta::loadTexture(const char *filename)
+    void espaco::draw()
     {
-        text = new textura(filename);
+        GLfloat halfSize = size / 2.0f;
+
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texture); // Bind the texture
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glBegin(GL_QUADS);
+        // Front Face
+        // glNormal3f(0.0, 0.0, 1.0);
+        glTexCoord2f(0.0, 0.0);
+        glVertex3f(-halfSize, -halfSize, halfSize);
+        glTexCoord2f(1.0, 0.0);
+        glVertex3f(halfSize, -halfSize, halfSize);
+        glTexCoord2f(1.0, 1.0);
+        glVertex3f(halfSize, halfSize, halfSize);
+        glTexCoord2f(0.0, 1.0);
+        glVertex3f(-halfSize, halfSize, halfSize);
+
+        // Back Face
+        glNormal3f(0.0, 0.0, -1.0);
+        glTexCoord2f(1.0, 0.0);
+        glVertex3f(-halfSize, -halfSize, -halfSize);
+        glTexCoord2f(1.0, 1.0);
+        glVertex3f(-halfSize, halfSize, -halfSize);
+        glTexCoord2f(0.0, 1.0);
+        glVertex3f(halfSize, halfSize, -halfSize);
+        glTexCoord2f(0.0, 0.0);
+        glVertex3f(halfSize, -halfSize, -halfSize);
+
+        // Top Face
+        glNormal3f(0.0, 1.0, 0.0);
+        glTexCoord2f(0.0, 1.0);
+        glVertex3f(-halfSize, halfSize, -halfSize);
+        glTexCoord2f(0.0, 0.0);
+        glVertex3f(-halfSize, halfSize, halfSize);
+        glTexCoord2f(1.0, 0.0);
+        glVertex3f(halfSize, halfSize, halfSize);
+        glTexCoord2f(1.0, 1.0);
+        glVertex3f(halfSize, halfSize, -halfSize);
+
+        // Bottom Face
+        glNormal3f(0.0, -1.0, 0.0);
+        glTexCoord2f(1.0, 1.0);
+        glVertex3f(-halfSize, -halfSize, -halfSize);
+        glTexCoord2f(0.0, 1.0);
+        glVertex3f(halfSize, -halfSize, -halfSize);
+        glTexCoord2f(0.0, 0.0);
+        glVertex3f(halfSize, -halfSize, halfSize);
+        glTexCoord2f(1.0, 0.0);
+        glVertex3f(-halfSize, -halfSize, halfSize);
+
+        // Right face
+        glNormal3f(1.0, 0.0, 0.0);
+        glTexCoord2f(1.0, 0.0);
+        glVertex3f(halfSize, -halfSize, -halfSize);
+        glTexCoord2f(1.0, 1.0);
+        glVertex3f(halfSize, halfSize, -halfSize);
+        glTexCoord2f(0.0, 1.0);
+        glVertex3f(halfSize, halfSize, halfSize);
+        glTexCoord2f(0.0, 0.0);
+        glVertex3f(halfSize, -halfSize, halfSize);
+
+        // Left Face
+        glNormal3f(-1.0, 0.0, 0.0);
+        glTexCoord2f(0.0, 0.0);
+        glVertex3f(-halfSize, -halfSize, -halfSize);
+        glTexCoord2f(1.0, 0.0);
+        glVertex3f(-halfSize, -halfSize, halfSize);
+        glTexCoord2f(1.0, 1.0);
+        glVertex3f(-halfSize, halfSize, halfSize);
+        glTexCoord2f(0.0, 1.0);
+        glVertex3f(-halfSize, halfSize, -halfSize);
+
+        glEnd();
+        glDisable(GL_TEXTURE_2D);
     }
 }

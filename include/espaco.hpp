@@ -4,6 +4,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <vector>
+#include <glm/gtc/type_ptr.hpp>
 #include <SOIL/SOIL.h>
 #include "textura.hpp"
 
@@ -15,31 +17,64 @@ namespace spc
     private:
         glm::vec3 position;
         glm::vec3 size;
-        textura *text;
+        glm::vec3 rotation;
+        GLuint texture;
+        GLfloat raio = 0.5f;
+        GLuint nStacks = 50;
+        GLuint nSectors = 50;
+
+        
 
     public:
         /*
-        * Construtor da classe planeta
-        * @param newPosition posição do planeta
-        * @param newSize tamanho do planeta
-        */
-        planeta(glm::vec3 newPosition, glm::vec3 newSize);
+         * Construtor da classe planeta
+         * @param newPosition posição do planeta
+         * @param newSize tamanho do planeta
+         * @param filename nome do arquivo da textura
+         */
+        planeta(glm::vec3 newPosition, glm::vec3 newSize, const char *filename)
+        {
+            position = newPosition;
+            size = newSize;
+            texture = SOIL_load_OGL_texture(filename, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+            if (texture == 0)
+            {
+                std::cout << "Error loading texture " << filename << std::endl;
+            }
+        }
 
         /*
-        * Destrutor da classe planeta
-        */
+         * Destrutor da classe planeta
+         */
         ~planeta();
 
         /*
-        * Desenha o planeta
-        */
+         * Desenha o planeta
+         */
         void draw();
 
-        /*
-        * Carrega a textura do planeta
-        * @param filename nome do arquivo da textura
-        */
-        void loadTexture(const char *filename);
+        void updateRotation(float angle)
+        {
+            rotation.y += angle;
+        }
     };
 
+    class espaco
+    {
+    private:
+        GLfloat size;
+        GLuint texture;
+
+    public:
+        espaco(GLfloat newSize, const char *filename)
+        {
+            size = newSize;
+            texture = SOIL_load_OGL_texture(filename, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+            if (texture == 0)
+            {
+                std::cout << "Error loading texture " << filename << std::endl;
+            }
+        }
+        void draw();
+    };
 }
