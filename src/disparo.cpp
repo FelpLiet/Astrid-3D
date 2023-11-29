@@ -13,18 +13,11 @@ namespace spc
         glm::vec3 posicaoAjustada = position + 0.1f * direction;
 
         glColor3f(1.0f, 0.0f, 0.0f); // Configura a cor antes de começar o desenho
-        glBegin(GL_TRIANGLE_FAN);
-        glVertex3f(posicaoAjustada.x, posicaoAjustada.y, posicaoAjustada.z);
 
-        for (int i = 0; i <= 360; ++i)
-        {
-            float angle = glm::radians(static_cast<float>(i));
-            float x = posicaoAjustada.x + radius * std::cos(angle);
-            float y = posicaoAjustada.y + radius * std::sin(angle);
-            glVertex3f(x, y, posicaoAjustada.z);
-        }
+        glTranslatef(posicaoAjustada.x, posicaoAjustada.y, posicaoAjustada.z);
 
-        glEnd();
+        glutSolidSphere(radius, 20, 20); // Desenha uma esfera
+
         glPopMatrix();
     }
 
