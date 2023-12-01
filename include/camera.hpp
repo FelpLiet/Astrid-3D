@@ -40,6 +40,9 @@ namespace spc
         GLfloat getLookZ() { return lookZ; }
         GLfloat getYaw() { return yaw; }
         GLfloat getPitch() { return pitch; }
+        glm::vec3 getCameraPosition() { return glm::vec3(cameraX, cameraY, cameraZ); }
+        glm::vec3 getLookPosition() { return glm::vec3(lookX, lookY, lookZ); }
+
         int getSpeed() { return speed; }
 
         void cameraLookAt();

@@ -51,4 +51,6 @@ namespace spc
     void verificaDisparos(std::vector<spc::disparo> &disparos);
 
     void drawDisparos(const std::vector<spc::disparo> &disparos);
+
+    void disparar(std::vector<spc::disparo> &disparos, const glm::vec3 &position, const glm::vec3 &direction);
 }

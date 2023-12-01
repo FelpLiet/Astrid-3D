@@ -22,15 +22,10 @@ void drawScene()
 
     spc::drawDisparos(disparos);
     
-    glPushMatrix();
-    glColor3f(1.0f, 1.0f, 1.0f);
     espaco->draw();
-    glPopMatrix();
 
-    glPushMatrix();
-    glColor3f(1.0f, 1.0f, 1.0f);
     planetaTerra->draw();
-    glPopMatrix();
+    
 
     glutSwapBuffers();
 }
@@ -44,7 +39,7 @@ void mouseButton(int button, int state, int x, int y)
 {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
     {
-        disparar();
+        spc::disparar(disparos, camera->getCameraPosition(), camera->getLookPosition());
     }
 }
 
@@ -124,11 +119,3 @@ void input(unsigned char key, int x, int y)
     }
 }
 
-//TODO colocar o disparar na classe
-void disparar()
-{
-    glm::vec3 direcaoDisparo = glm::normalize(glm::vec3(camera->getLookX(), camera->getLookY(), camera->getLookZ()));
-
-    spc::disparo novoDisparo(glm::vec3(camera->getCameraX(), camera->getCameraY(), camera->getCameraZ()), direcaoDisparo);
-    disparos.push_back(novoDisparo);
-}
