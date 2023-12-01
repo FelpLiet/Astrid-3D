@@ -12,6 +12,38 @@ namespace spc
         // Ajuste a posição inicial para evitar que o disparo fique dentro da câmera
         glm::vec3 posicaoAjustada = position + 0.1f * direction;
 
+        // Ativar iluminação
+        glEnable(GL_LIGHTING);
+
+        // Ativar a luz específica para o disparo
+        glEnable(GL_LIGHT0);
+
+        // Configuração de luz ambiente global, se necessário
+        GLfloat globalAmbient[] = {0.2f, 0.2f, 0.2f, 1.0f};
+        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmbient);
+
+        // Configuração da cor e intensidade para um disparo de laser vermelho
+        GLfloat lightColor[] = {1.0f, 0.0f, 0.0f, 1.0f};
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor);
+
+        // Definir a intensidade da luz (experimente diferentes valores)
+        GLfloat lightIntensity = 1.0f;
+        glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, lightIntensity);
+
+        // Configurações adicionais da luz
+        glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.01f); // Ajuste a atenuação para um efeito mais realista
+
+        // Configuração de material para o disparo (ajuste conforme necessário)
+        GLfloat materialAmbient[] = {0.2f, 0.2f, 0.2f, 1.0f};
+        GLfloat materialDiffuse[] = {1.0f, 0.0f, 0.0f, 1.0f};
+        GLfloat materialSpecular[] = {1.0f, 1.0f, 1.0f, 1.0f};
+        GLfloat materialShininess = 50.0f;
+
+        glMaterialfv(GL_FRONT, GL_AMBIENT, materialAmbient);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, materialDiffuse);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, materialSpecular);
+        glMaterialf(GL_FRONT, GL_SHININESS, materialShininess);
+
         glColor3f(1.0f, 0.0f, 0.0f); // Configura a cor antes de começar o desenho
 
         glTranslatef(posicaoAjustada.x, posicaoAjustada.y, posicaoAjustada.z);
