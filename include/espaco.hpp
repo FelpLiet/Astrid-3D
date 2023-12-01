@@ -21,21 +21,20 @@ namespace spc
         std::vector<std::vector<glm::vec3>> pontos;
         std::vector<std::vector<glm::vec2>> texCoords;
         GLuint texture;
-        GLfloat raio = 0.5f;
-        GLuint nStacks = 50;
-        GLuint nSectors = 50;
+        GLfloat raio;
+        GLuint nStacks;
+        GLuint nSectors;
 
     public:
-        /*
-         * Construtor da classe planeta
-         * @param newPosition posição do planeta
-         * @param newSize tamanho do planeta
-         * @param filename nome do arquivo da textura
-         */
-        planeta(glm::vec3 newPosition, glm::vec3 newSize, const char *filename)
+        planeta(glm::vec3 newPosition, GLfloat newSize, const char *filename)
         {
+            raio = 0.5f;
+            nStacks = 50;
+            nSectors = 50;
             position = newPosition;
-            size = newSize;
+            size.x = newSize;
+            size.y = newSize;
+            size.z = newSize;
             texture = SOIL_load_OGL_texture(filename, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
             if (texture == 0)
             {
@@ -43,14 +42,8 @@ namespace spc
             }
         }
 
-        /*
-         * Destrutor da classe planeta
-         */
         ~planeta();
 
-        /*
-         * Desenha o planeta
-         */
         void draw();
 
         void updateRotation(float angle)
