@@ -50,6 +50,7 @@ namespace spc
 
         glutSolidSphere(radius, 20, 20); // Desenha uma esfera
 
+        glDisable(GL_LIGHTING);
         glPopMatrix();
     }
 

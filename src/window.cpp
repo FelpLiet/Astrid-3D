@@ -1,11 +1,10 @@
 #include "../include/window.hpp"
-#include "../include/disparo.hpp"
 
 bool running = true, fullscreen;
 
 //TODO implementar camera na classe
-GLfloat cameraX = 0.0f, cameraY = 0.0f, cameraZ = 5.0f; // Camera position
-GLfloat lookX = 0.0f, lookY = 0.0f, lookZ = -1.0f;      // Direction the camera is looking
+GLfloat cameraX = 16.0f, cameraY = 2.0f, cameraZ = -16.0f; // Camera position
+GLfloat lookX = -0.67f, lookY = 0.24f, lookZ = 0.7f;      // Direction the camera is looking
 int speed = 1;
 GLfloat yaw = 0.0f, pitch = 0.0f; // Camera speed
 
@@ -30,7 +29,7 @@ void drawScene()
     gluLookAt(cameraX, cameraY, cameraZ,                         // Camera position
               cameraX + lookX, cameraY + lookY, cameraZ + lookZ, // Look at point
               0.0f, 1.0f, 0.0f);
-
+    std::cout << lookX << " " << lookY << " " << lookZ << std::endl;
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glClearDepth(1.0f);

@@ -7,6 +7,7 @@ namespace spc
     {
         glEnable(GL_TEXTURE_2D);
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
         glBindTexture(GL_TEXTURE_2D, texture);
 
         const GLfloat TWO_PI = 2 * M_PI;
@@ -47,8 +48,14 @@ namespace spc
 
             for (GLuint j = 0; j <= nSectors; j++)
             {
+                glm::vec3 normal = glm::normalize(pontos[i][j]);
+                glNormal3fv(glm::value_ptr(normal));
+
                 glTexCoord2fv(glm::value_ptr(texCoords[i][j]));
                 glVertex3fv(glm::value_ptr(pontos[i][j]));
+
+                normal = glm::normalize(pontos[i + 1][j]);
+                glNormal3fv(glm::value_ptr(normal));
 
                 glTexCoord2fv(glm::value_ptr(texCoords[i + 1][j]));
                 glVertex3fv(glm::value_ptr(pontos[i + 1][j]));

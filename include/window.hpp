@@ -9,6 +9,7 @@
 #include "camera.hpp"
 #include "espaco.hpp"
 #include "asteroide.hpp"
+#include "disparo.hpp"
 
 #define WIDTH 1366
 #define HEIGHT 768
