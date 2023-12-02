@@ -8,6 +8,7 @@ namespace spc
     void disparo::draw() const
     {
         glPushMatrix();
+        glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT);
 
         // Ajuste a posição inicial para evitar que o disparo fique dentro da câmera
         glm::vec3 posicaoAjustada = position + 0.1f * direction;
@@ -52,6 +53,7 @@ namespace spc
 
         glDisable(GL_LIGHTING);
         glPopMatrix();
+        glPopAttrib(); 
     }
 
     void disparo::updatePointStatus()
@@ -95,4 +97,12 @@ namespace spc
             disparo.draw();
         }
     }
+
+    void disparar(std::vector<spc::disparo> &disparos, const glm::vec3 &position, const glm::vec3 &direction)
+    {
+        glm::vec3 newDirection = glm::normalize(direction);
+        spc::disparo novoDisparo(position, newDirection);
+        disparos.push_back(novoDisparo);
+    }
+
 }

@@ -9,7 +9,7 @@ namespace spc
 
     void planeta::draw()
     {
-
+        glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT);
         glPushMatrix();
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT1);
@@ -49,6 +49,7 @@ namespace spc
         glDisable(GL_LIGHT1);
         glDisable(GL_LIGHTING);
         glPopMatrix();
+        glPopAttrib(); 
     }
 
     void espaco::draw()

@@ -2,6 +2,7 @@
 
 spc::espaco *espaco = nullptr;
 spc::planeta *planetaTerra = nullptr;
+spc::camera *camera = nullptr;
 
 int main(int argc, char **argv)
 {
@@ -16,11 +17,12 @@ int main(int argc, char **argv)
     glutReshapeFunc(resize_callback);
     glutPassiveMotionFunc(mouseMotion);
     glutMouseFunc(mouseButton);
-    glutTimerFunc(0, update, 0);
+    glutTimerFunc(0, timerUpdate, 0);
 
     espaco = new spc::espaco(50.0f, "assets/espaco.jpg");
-    planetaTerra = new spc::planeta(glm::vec3(10.0f, 0.0f, -10.0f), glm::vec3(5.0f, 5.0f, 5.0f), "assets/earth.jpg");
-    
+    planetaTerra = new spc::planeta(glm::vec3(10.0f, 0.0f, -10.0f), 5.0f, "assets/earth.jpg");
+    camera = new spc::camera();
+
     glutMainLoop();
 
     return 0;

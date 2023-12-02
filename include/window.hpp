@@ -16,11 +16,9 @@
 #define FPS 60
 
 void drawScene();
-void update(int);
-void input(unsigned char key, int x, int y);
-// void mouse_button_callback(int button, int state, int x, int y);
-// void mouse_callback(int x, int y);
-void resize_callback(int x, int y);
+void timerUpdate(int);
 void mouseMotion(int x, int y);
 void mouseButton(int button, int state, int x, int y);
+void resize_callback(int x, int y);
+void input(unsigned char key, int x, int y);
 void disparar();
