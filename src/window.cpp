@@ -4,6 +4,7 @@ bool running = true, fullscreen;
 
 extern spc::espaco *espaco;
 extern spc::planeta *planetaTerra;
+extern spc::sol *sol;
 extern spc::camera *camera;
 
 std::vector<spc::disparo> disparos;
@@ -26,6 +27,7 @@ void drawScene()
 
     planetaTerra->draw();
     
+    sol->draw();
 
     glutSwapBuffers();
 }
@@ -46,7 +48,7 @@ void mouseButton(int button, int state, int x, int y)
 void timerUpdate(int)
 {
     glutPostRedisplay();
-    planetaTerra->updateRotation(1.0f);
+    planetaTerra->updateRotation(0.1f);
     spc::verificaDisparos(disparos);
     glutTimerFunc(1000 / FPS, timerUpdate, 0);
 }

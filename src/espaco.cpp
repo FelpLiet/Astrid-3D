@@ -7,6 +7,15 @@ namespace spc
     {
     }
 
+    void espaco::draw()
+    {
+        glPushMatrix();
+        glTranslatef(position.x, position.y, position.z);
+        glScalef(size.x, size.y, size.z);
+        drawSphere(raio, nStacks, nSectors, texture, pontos, texCoords);
+        glPopMatrix();
+    }
+
     void planeta::draw()
     {
         glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT);
@@ -17,7 +26,7 @@ namespace spc
         GLfloat light_ambient[] = {0.0, 0.0, 0.0, 1.0};
         GLfloat light_diffuse[] = {1.5f, 1.5f, 1.5f, 1.0f}; 
         GLfloat light_specular[] = {2.0f, 2.0f, 2.0f, 1.0f};
-        GLfloat att_constant = 1.0;
+        GLfloat att_constant = 0.15;
         GLfloat att_linear = 0.0;
         GLfloat att_quadratic = 0.0;
         GLfloat spot_direction[] = {0.0, 0.0, 0.0};
@@ -52,7 +61,7 @@ namespace spc
         glPopAttrib(); 
     }
 
-    void espaco::draw()
+    void sol::draw()
     {
         glPushMatrix();
         glTranslatef(position.x, position.y, position.z);

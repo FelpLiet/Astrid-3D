@@ -28,7 +28,7 @@ namespace spc
         yaw += dx * sensitivity;
         pitch -= dy * sensitivity;
 
-        // Limit pitch to avoid flipping the camera upside down
+        // Limit pitch and yaw
         if (pitch > 1.0f)
             pitch = 1.0f;
         if (pitch < -1.0f)
@@ -42,7 +42,7 @@ namespace spc
         lookX = cos(yaw) * cos(pitch);
         lookY = sin(pitch);
         lookZ = sin(yaw) * cos(pitch);
-        std::cout << "pitch: " << pitch << " yaw: " << yaw << std::endl;
+
         // Update last mouse position
         lastX = x;
         lastY = y;
