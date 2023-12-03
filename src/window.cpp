@@ -12,6 +12,7 @@ std::vector<spc::disparo> disparos;
 void drawScene()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_MULTISAMPLE);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 

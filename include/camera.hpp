@@ -19,7 +19,7 @@ namespace spc
     public:
         camera()
         {
-            std::cout << "Camera criada" << std::endl;
+            // std::cout << "Camera criada" << std::endl;
             cameraX = 16.0f;
             cameraY = 2.0f;
             cameraZ = -16.0f;
