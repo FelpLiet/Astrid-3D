@@ -13,6 +13,7 @@ extern spc::espaco *espaco;
 extern spc::planeta *planetaTerra;
 
 std::vector<spc::disparo> disparos;
+std::vector<spc::disparo> lightPoint;
 
 void mouseButton(int button, int state, int x, int y)
 {
@@ -35,7 +36,7 @@ void drawScene()
     glDepthFunc(GL_LEQUAL);
     glClearDepth(1.0f);
 
-    spc::drawDisparos(disparos);
+    spc::drawDisparos(disparos, lightPoint);
     
     glPushMatrix();
     glColor3f(1.0f, 1.0f, 1.0f);
@@ -55,7 +56,7 @@ void update(int)
 {
     glutPostRedisplay();
     planetaTerra->updateRotation(1.0f);
-    spc::verificaDisparos(disparos);
+    spc::verificaDisparos(disparos, lightPoint);
     glutTimerFunc(1000 / FPS, update, 0);
 }
 
@@ -171,4 +172,5 @@ void disparar()
 
     spc::disparo novoDisparo(glm::vec3(cameraX, cameraY, cameraZ), direcaoDisparo);
     disparos.push_back(novoDisparo);
+    lightPoint.push_back(novoDisparo);
 }

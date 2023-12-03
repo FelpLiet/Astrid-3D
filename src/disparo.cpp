@@ -12,28 +12,23 @@ namespace spc
         // Ajuste a posição inicial para evitar que o disparo fique dentro da câmera
         glm::vec3 posicaoAjustada = position + 0.1f * direction;
 
-        // Ativar iluminação
-        glEnable(GL_LIGHTING);
+        glColor3f(1.0f, 0.0f, 0.0f); // Configura a cor antes de começar o desenho
 
-        // Ativar a luz específica para o disparo
-        glEnable(GL_LIGHT0);
+        glTranslatef(posicaoAjustada.x, posicaoAjustada.y, posicaoAjustada.z);
 
-        // Configuração de luz ambiente global, se necessário
-        GLfloat globalAmbient[] = {0.2f, 0.2f, 0.2f, 1.0f};
-        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmbient);
+        glutSolidSphere(radius, 20, 20); // Desenha uma esfera
+
+        glPopMatrix();
+    }
+
+    void disparo::drawLightPoints() const
+    {
+        glPushMatrix();
+
+        // Ajuste a posição inicial para evitar que o disparo fique dentro da câmera
+        glm::vec3 posicaoAjustada = position + 0.1f * direction;
 
         // Configuração da cor e intensidade para um disparo de laser vermelho
-        GLfloat lightColor[] = {1.0f, 0.0f, 0.0f, 1.0f};
-        glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor);
-
-        // Definir a intensidade da luz (experimente diferentes valores)
-        GLfloat lightIntensity = 1.0f;
-        glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, lightIntensity);
-
-        // Configurações adicionais da luz
-        glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.01f); // Ajuste a atenuação para um efeito mais realista
-
-        // Configuração de material para o disparo (ajuste conforme necessário)
         GLfloat materialAmbient[] = {0.2f, 0.2f, 0.2f, 1.0f};
         GLfloat materialDiffuse[] = {1.0f, 0.0f, 0.0f, 1.0f};
         GLfloat materialSpecular[] = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -46,6 +41,7 @@ namespace spc
 
         glColor3f(1.0f, 0.0f, 0.0f); // Configura a cor antes de começar o desenho
 
+        // Aplica a mesma transformação à posição do disparo
         glTranslatef(posicaoAjustada.x, posicaoAjustada.y, posicaoAjustada.z);
 
         glutSolidSphere(radius, 20, 20); // Desenha uma esfera
@@ -71,7 +67,7 @@ namespace spc
         return std::chrono::duration_cast<std::chrono::seconds>(currentTime - timeCreated).count() < 1;
     }
 
-    void verificaDisparos(std::vector<spc::disparo> &disparos)
+    void verificaDisparos(std::vector<spc::disparo> &disparos, std::vector<spc::disparo> &lightPoints)
     {
         for (auto it = disparos.begin(); it != disparos.end();)
         {
@@ -85,13 +81,34 @@ namespace spc
                 ++it;
             }
         }
+
+        // Verificar os pontos de luz correspondentes
+        for (auto it = lightPoints.begin(); it != lightPoints.end();)
+        {
+            it->updatePointStatus(); // Supondo que a luz tenha uma função semelhante a updatePointStatus
+            if (!it->isAlive())
+            {
+                it = lightPoints.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
     }
 
-    void drawDisparos(const std::vector<spc::disparo> &disparos)
+    void drawDisparos(const std::vector<spc::disparo> &disparos, const std::vector<spc::disparo> &lightPoints)
     {
+        // Desenhar os disparos
         for (const auto &disparo : disparos)
         {
             disparo.draw();
+        }
+
+        // Desenhar os pontos de luz correspondentes
+        for (const auto &lightPoint : lightPoints)
+        {
+            lightPoint.drawLightPoints(); // Supondo que exista uma função draw para a luz
         }
     }
 }

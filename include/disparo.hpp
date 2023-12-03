@@ -38,6 +38,7 @@ namespace spc
         }
 
         void draw() const;
+        void drawLightPoints() const;
         void updatePointStatus();
         bool isAlive() const;
 
@@ -48,7 +49,7 @@ namespace spc
 
     };
 
-    void verificaDisparos(std::vector<spc::disparo> &disparos);
+    void verificaDisparos(std::vector<spc::disparo> &disparos, std::vector<spc::disparo> &lightPoints);
 
-    void drawDisparos(const std::vector<spc::disparo> &disparos);
+    void drawDisparos(const std::vector<spc::disparo> &disparos, const std::vector<spc::disparo> &lightPoints);
 }
