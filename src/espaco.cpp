@@ -2,11 +2,6 @@
 
 namespace spc
 {
-
-    planeta::~planeta()
-    {
-    }
-
     void espaco::draw()
     {
         glPushMatrix();
@@ -16,7 +11,16 @@ namespace spc
         glPopMatrix();
     }
 
-    void planeta::draw()
+    void sol::draw()
+    {  
+        glPushMatrix();
+        glTranslatef(position.x, position.y, position.z);
+        glScalef(size.x, size.y, size.z);
+        drawSphere(raio, nStacks, nSectors, texture, pontos, texCoords);
+        glPopMatrix();
+    }
+
+    void spc::planeta::draw()
     {
         glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT);
         glPushMatrix();
@@ -26,7 +30,7 @@ namespace spc
         GLfloat light_ambient[] = {0.0, 0.0, 0.0, 1.0};
         GLfloat light_diffuse[] = {1.5f, 1.5f, 1.5f, 1.0f}; 
         GLfloat light_specular[] = {2.0f, 2.0f, 2.0f, 1.0f};
-        GLfloat att_constant = 0.15;
+        GLfloat att_constant = 0.2;
         GLfloat att_linear = 0.0;
         GLfloat att_quadratic = 0.0;
         GLfloat spot_direction[] = {0.0, 0.0, 0.0};
@@ -43,30 +47,12 @@ namespace spc
         glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spot_direction);
         glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, spot_exponent);
         glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, spot_cutoff);
-
-        // glMaterialfv(GL_FRONT, GL_AMBIENT, light_ambient);
-        // glMaterialfv(GL_FRONT, GL_DIFFUSE, light_diffuse);
-        // glMaterialfv(GL_FRONT, GL_SPECULAR, light_specular);
-        // glMaterialf(GL_FRONT, GL_SHININESS, 50.0);
-        // glMaterialfv(GL_FRONT, GL_EMISSION, light_ambient);
-
+        
         glTranslatef(position.x, position.y, position.z);
         glScalef(size.x, size.y, size.z);
-        glRotatef(rotation.y, 0.0f, 1.0f, 0.0f);
-        drawSphere(raio, nStacks, nSectors, texture, pontos, texCoords);
-
-        glDisable(GL_LIGHT1);
-        glDisable(GL_LIGHTING);
-        glPopMatrix();
-        glPopAttrib(); 
-    }
-
-    void sol::draw()
-    {
-        glPushMatrix();
-        glTranslatef(position.x, position.y, position.z);
-        glScalef(size.x, size.y, size.z);
+        glRotatef(rotation, 0.0f, 1.0f, 0.0f);
         drawSphere(raio, nStacks, nSectors, texture, pontos, texCoords);
         glPopMatrix();
+        glPopAttrib();
     }
 }

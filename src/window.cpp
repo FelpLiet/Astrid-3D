@@ -49,7 +49,7 @@ void mouseButton(int button, int state, int x, int y)
 void timerUpdate(int)
 {
     glutPostRedisplay();
-    planetaTerra->updateRotation(0.1f);
+    planetaTerra->updateRotations(0.1f);
     spc::verificaDisparos(disparos);
     glutTimerFunc(1000 / FPS, timerUpdate, 0);
 }

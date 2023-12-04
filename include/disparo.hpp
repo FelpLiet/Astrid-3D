@@ -15,7 +15,7 @@ namespace spc
         glm::vec3 direction;
         float radius;
         bool drawPoint;
-        float speed = 5.0f;
+        float speed = 30.0f;
         std::chrono::steady_clock::time_point lastUpdateTime;
         std::chrono::steady_clock::time_point timeCreated;
         std::chrono::steady_clock::time_point pointTimerStart;
