@@ -20,7 +20,7 @@ namespace spc
         glPopMatrix();
     }
 
-    void spc::planeta::draw()
+    void planeta::draw()
     {
         glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT);
         glPushMatrix();

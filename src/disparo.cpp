@@ -1,6 +1,4 @@
 #include "../include/disparo.hpp"
-#include <GL/glut.h>
-#include <cmath>
 
 namespace spc
 {

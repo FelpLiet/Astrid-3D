@@ -1,6 +1,6 @@
 #include "../include/window.hpp"
 
-bool running = true, fullscreen;
+bool running = true, fullscreen, debug = false;
 
 extern spc::espaco *espaco;
 extern spc::planeta *planetaTerra;
@@ -8,6 +8,7 @@ extern spc::sol *sol;
 extern spc::camera *camera;
 
 std::vector<spc::disparo> disparos;
+std::vector<spc::asteroide> asteroides;
 
 void drawScene()
 {
@@ -24,6 +25,8 @@ void drawScene()
 
     spc::drawDisparos(disparos);
     
+    spc::drawAsteroides(asteroides);
+
     espaco->draw();
 
     planetaTerra->draw();
@@ -51,7 +54,14 @@ void timerUpdate(int)
     glutPostRedisplay();
     planetaTerra->updateRotations(0.1f);
     spc::verificaDisparos(disparos);
+    spc::verificaAsteroides(asteroides); 
     glutTimerFunc(1000 / FPS, timerUpdate, 0);
+}
+
+void createAsteroid(int)
+{
+    spc::gerarAsteroide(asteroides);
+    glutTimerFunc(2000, createAsteroid, 0);
 }
 
 void resize_callback(int x, int y)
@@ -117,6 +127,8 @@ void input(unsigned char key, int x, int y)
         else
             glutSetCursor(GLUT_CURSOR_NONE);
         break;
+    case ';':
+        debug = !debug;
     default:
         break;
     }

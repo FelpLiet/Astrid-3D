@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GL/glut.h>
+#include <cmath>
 #include <glm/glm.hpp>
 #include <iostream>
 #include <chrono>

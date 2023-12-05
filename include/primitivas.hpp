@@ -1,7 +1,7 @@
 #pragma once
 
+#include <GL/glut.h>
 #include <glm/glm.hpp>
-#include <GL/glew.h>
 #include <iostream>
 #include <vector>
 #include <glm/gtc/type_ptr.hpp>

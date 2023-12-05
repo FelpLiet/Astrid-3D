@@ -1,5 +1,7 @@
 #include "../include/camera.hpp"
 
+extern bool debug;
+
 namespace spc
 {
     camera::~camera()
@@ -29,15 +31,26 @@ namespace spc
         pitch -= dy * sensitivity;
 
         // Limit pitch and yaw
-        if (pitch > 1.0f)
-            pitch = 1.0f;
-        if (pitch < -1.0f)
-            pitch = -1.0f;
-        if(yaw > 4.0f)
-            yaw = 4.0f;
-        if(yaw < 1.3f)
-            yaw = 1.3f;
-
+        if (debug)
+        {
+            if (pitch > 1.0f)
+                pitch = 1.0f;
+            if (pitch < -1.0f)
+                pitch = -1.0f;
+            if (yaw > 4.0f)
+                yaw = 4.0f;
+            if (yaw < 1.3f)
+                yaw = 1.3f;
+        }else{
+            if (pitch > 1.0f)
+                pitch = 1.0f;
+            if (pitch < -1.0f)
+                pitch = -1.0f;
+            if (yaw > 5.0f)
+                yaw = 4.0f;
+            if (yaw < 0.0f)
+                yaw = 0.0f;
+        }
         // Update camera direction
         lookX = cos(yaw) * cos(pitch);
         lookY = sin(pitch);
