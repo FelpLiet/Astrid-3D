@@ -39,9 +39,15 @@ namespace spc
             lastUpdateTime = timeCreated;
         }
 
+        glm::vec3 getPosition() const
+        {
+            return position;
+        }
+
         void draw() const;
         void updatePointStatus();
         bool isAlive() const;
+        bool isColliding(const glm::vec3 &position, float radius) const;
 
         const std::chrono::steady_clock::time_point &getTimeCreated() const
         {

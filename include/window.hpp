@@ -23,3 +23,5 @@ void mouseMotion(int x, int y);
 void mouseButton(int button, int state, int x, int y);
 void resize_callback(int x, int y);
 void input(unsigned char key, int x, int y);
+void disparoColideAsteroide(std::vector<spc::disparo> &disparos, std::vector<spc::asteroide *> &asteroides);
+void asteroideColidePlaneta(std::vector<spc::asteroide *> &asteroides, spc::planeta *planetaTerra);

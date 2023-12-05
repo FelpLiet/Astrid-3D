@@ -72,6 +72,12 @@ namespace spc
         return std::chrono::duration_cast<std::chrono::seconds>(currentTime - timeCreated).count() < 1;
     }
 
+    bool disparo::isColliding(const glm::vec3 &position, float radius) const
+    {
+        // Verifique se o disparo está colidindo com a esfera definida por position e radius
+        return glm::distance(this->position, position) <= this->radius + radius;
+    }
+
     void verificaDisparos(std::vector<spc::disparo> &disparos)
     {
         for (auto it = disparos.begin(); it != disparos.end();)

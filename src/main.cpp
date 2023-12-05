@@ -14,8 +14,6 @@ int main(int argc, char **argv)
     glutCreateWindow("Astrid");
     glutSetOption(GLUT_MULTISAMPLE, 8);
 
-    
-
     glutDisplayFunc(drawScene);
     glutKeyboardFunc(input);
     glutReshapeFunc(resize_callback);
@@ -26,7 +24,7 @@ int main(int argc, char **argv)
 
     espaco = new spc::espaco(50.0f, "assets/espaco.jpg");
     planetaTerra = new spc::planeta(glm::vec3(10.0f, 0.0f, -10.0f), 5.0f, "assets/earth.jpg");
-    sol = new spc::sol(glm::vec3(10.0f, 10.0f, 20.0f), 0.5f, "assets/sun.jpg");
+    sol = new spc::sol(glm::vec3(10.0f, 10.0f, 10.0f), 0.5f, "assets/sun.jpg");
     camera = new spc::camera();
 
     glutMainLoop();

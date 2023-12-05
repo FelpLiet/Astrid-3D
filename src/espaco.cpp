@@ -26,7 +26,7 @@ namespace spc
         glPushMatrix();
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT1);
-        GLfloat light_position[] = {16.0, 10.0, 0.0, 1.0};
+        GLfloat light_position[] = {10.0, 10.0, 10.0, 1.0};
         GLfloat light_ambient[] = {0.0, 0.0, 0.0, 1.0};
         GLfloat light_diffuse[] = {1.5f, 1.5f, 1.5f, 1.0f}; 
         GLfloat light_specular[] = {2.0f, 2.0f, 2.0f, 1.0f};

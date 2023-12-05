@@ -8,7 +8,7 @@ extern spc::sol *sol;
 extern spc::camera *camera;
 
 std::vector<spc::disparo> disparos;
-std::vector<spc::asteroide> asteroides;
+std::vector<spc::asteroide *> asteroides;
 
 void drawScene()
 {
@@ -24,13 +24,13 @@ void drawScene()
     glClearDepth(1.0f);
 
     spc::drawDisparos(disparos);
-    
+
     spc::drawAsteroides(asteroides);
 
     espaco->draw();
 
     planetaTerra->draw();
-    
+
     sol->draw();
 
     glutSwapBuffers();
@@ -54,7 +54,9 @@ void timerUpdate(int)
     glutPostRedisplay();
     planetaTerra->updateRotations(0.1f);
     spc::verificaDisparos(disparos);
-    spc::verificaAsteroides(asteroides); 
+    spc::verificaAsteroides(asteroides);
+    disparoColideAsteroide(disparos, asteroides);
+    asteroideColidePlaneta(asteroides, planetaTerra);
     glutTimerFunc(1000 / FPS, timerUpdate, 0);
 }
 
@@ -70,7 +72,7 @@ void resize_callback(int x, int y)
         return;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(40.0, (GLdouble)x / (GLdouble)y, 0.5, 50.0);
+    gluPerspective(50.0, (GLdouble)x / (GLdouble)y, 0.5, 50.0);
     glMatrixMode(GL_MODELVIEW);
     glViewport(0, 0, x, y);
 }
@@ -133,4 +135,44 @@ void input(unsigned char key, int x, int y)
         break;
     }
 }
+void disparoColideAsteroide(std::vector<spc::disparo> &disparos, std::vector<spc::asteroide *> &asteroides)
+{
+    for (auto it = disparos.begin(); it != disparos.end();)
+    {
+        for (auto it2 = asteroides.begin(); it2 != asteroides.end();)
+        {
+            if (it[0].isColliding(it2[0]->getPosition(), it2[0]->getRadius()))
+            {
+                it2[0]->setDrawPoint(true);
+                it = disparos.erase(it);
+                it2 = asteroides.erase(it2);
+                // std::cout << "Asteroide atingido" << std::endl;
+            }
+            else
+            {
+                ++it2;
+            }
+        }
+        if (it != disparos.end())
+        {
+            ++it;
+        }
+    }
+}
 
+void asteroideColidePlaneta(std::vector<spc::asteroide *> &asteroides, spc::planeta *planetaTerra)
+{
+    for (auto it = asteroides.begin(); it != asteroides.end();)
+    {
+        if (it[0]->isColliding(planetaTerra->getPosition(), planetaTerra->getRadius()))
+        {
+            it[0]->setDrawPoint(true);
+            it = asteroides.erase(it);
+            // std::cout << "Planeta Terra atingido" << std::endl;
+        }
+        else
+        {
+            ++it;
+        }
+    }
+}

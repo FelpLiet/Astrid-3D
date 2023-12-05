@@ -22,9 +22,9 @@ namespace spc
         std::vector<std::vector<glm::vec3>> pontos;
         std::vector<std::vector<glm::vec2>> texCoords;
         GLuint texture;
-        GLfloat raio;
         GLuint nStacks;
         GLuint nSectors;
+        GLfloat raio;
 
         float deltaTime()
         {
@@ -45,16 +45,33 @@ namespace spc
             radius = 1.0f;
             nStacks = 50;
             nSectors = 50;
-            texture = SOIL_load_OGL_texture("assets/wesley.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+            texture = SOIL_load_OGL_texture("assets/asteroide.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
             if (texture == 0)
             {
                 std::cout << "Error loading texture " << std::endl;
             }
         }
 
+        glm::vec3 getPosition() const
+        {
+            return position;
+        }
+
+        float getRadius() const
+        {
+            return radius;
+        }
+
+        void setDrawPoint(bool drawPoint)
+        {
+            this->drawPoint = drawPoint;
+            pointTimerStart = std::chrono::steady_clock::now();
+        }
+
         void draw();
         void updatePointStatus();
         bool isAlive() const;
+        bool isColliding(const glm::vec3 &position, float radius) const;
 
         const std::chrono::steady_clock::time_point &getTimeCreated() const
         {
@@ -63,9 +80,9 @@ namespace spc
 
     };
 
-    void verificaAsteroides(std::vector<spc::asteroide> &asteroides);
+    void verificaAsteroides(std::vector<spc::asteroide*> &asteroides);
 
-    void drawAsteroides(std::vector<spc::asteroide> &asteroides);
+    void drawAsteroides(std::vector<spc::asteroide*> &asteroides);
 
-    void gerarAsteroide(std::vector<spc::asteroide> &asteroides);
+    void gerarAsteroide(std::vector<spc::asteroide*> &asteroides);
 }

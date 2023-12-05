@@ -98,6 +98,16 @@ namespace spc
             }
         }
 
+        glm::vec3 getPosition() const
+        {
+            return position;
+        }
+
+        float getRadius() const
+        {
+            return raio;
+        }
+
         void updateRotations(GLfloat newRotation)
         {
             rotation += newRotation;
