@@ -1,7 +1,7 @@
 # Compiler
 CXX = g++
 # Compiler flags
-CXXFLAGS = -std=c++11 -Wall
+CXXFLAGS = -std=c++11 -Wall -Wextra
 
 # Directories
 SRC_DIR = src
@@ -14,7 +14,7 @@ HEADER_FILES = $(wildcard $(INCLUDE_DIR)/*.hpp)
 OBJECT_FILES = $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SOURCE_FILES))
 
 # Libraries
-LIBS = -lglfw -lSOIL -lGLEW -lGL
+LIBS = -lglut -lSOIL -lGLEW -lGL -lGLU
 
 # Executable
 TARGET = astrid3d

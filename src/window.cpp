@@ -1,219 +1,191 @@
 #include "../include/window.hpp"
 
-// spc::nave ship;
-// spc::space space;
-// spc::asteroide asteroide1;
-#define TARGET_FPS 60
+bool running = true, fullscreen = true, debug = false, mouse = false;
 
-GLFWwindow *window;
-GLFWmonitor *monitor;
+extern spc::espaco *espaco;
+extern spc::planeta *planetaTerra;
+extern spc::sol *sol;
+extern spc::camera *camera;
+extern spc::animacao *explosao;
 
-// std::vector<spc::disparo> disparos;
-std::map<int, key> keyMap;
+std::vector<spc::disparo> disparos;
+std::vector<spc::asteroide *> asteroides;
+std::vector<spc::animacao *> explosaoAsteroides;
 
-bool running = true, fullscreen;
-int WIDTH = 1366, HEIGHT = 768;
-
-int initWindow()
+void drawScene()
 {
-    if (!glfwInit())
-    {
-        std::cerr << "Erro ao inicializar o GLFW" << std::endl;
-        return -1;
-    }
-    glfwWindowHint(GLFW_SAMPLES, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_MULTISAMPLE);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 
-    window = glfwCreateWindow(WIDTH, HEIGHT, "ASTRID", nullptr, nullptr);
-    if (!window)
-    {
-        std::cerr << "Erro ao criar a janela GLFW" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
+    camera->cameraLookAt();
 
-    glfwMakeContextCurrent(window);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glClearDepth(1.0f);
 
-    glfwSetMouseButtonCallback(window, mouse_button_callback);
+    spc::drawDisparos(disparos);
 
-    monitor = glfwGetPrimaryMonitor();
-    running = true;
-    fullscreen = false;
+    spc::drawAsteroides(asteroides);
 
-    // Inicializa GLEW
-    if (glewInit() != GLEW_OK)
-    {
-        std::cerr << "Erro ao inicializar o GLEW" << std::endl;
-        return -1;
-    }
+    spc::drawExplosao(explosaoAsteroides);
 
-    return 0;
+    espaco->draw();
+
+    planetaTerra->draw();
+
+    sol->draw();
+
+    glutSwapBuffers();
 }
 
-void input(GLFWwindow *window)
+void mouseMotion(int x, int y)
 {
-    glfwPollEvents();
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    {
-        running = false;
-        glfwWindowShouldClose(window);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS && keyMap[GLFW_KEY_F].prev)
-    {
-        glfwWaitEventsTimeout(0.7);
-        if (!fullscreen)
-            glfwSetWindowMonitor(window, monitor, 0, 0, WIDTH, HEIGHT, 0);
-        if (fullscreen)
-            glfwSetWindowMonitor(window, NULL, 0, 0, WIDTH, HEIGHT, 0);
-        fullscreen = !fullscreen;
-    }
-    keyMap[GLFW_KEY_F].prev = glfwGetKey(window, GLFW_KEY_F);
+    camera->updateCameraLook(x, y);
 }
 
-void drawScene(GLFWwindow *window)
+void mouseButton(int button, int state, int x, int y)
 {
-    aspecRatio(window);
-
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    glBegin(GL_TRIANGLES);
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glVertex2f(-0.5f, -0.5f);
-    glColor3f(0.0f, 1.0f, 0.0f);
-    glVertex2f(0.5f, -0.5f);
-    glColor3f(0.0f, 0.0f, 1.0f);
-    glVertex2f(0.0f, 0.5f);
-    glEnd();
-
-    // ship.draw();
-
-    // space.drawEstrelas();
-
-    // space.getTerra().draw();
-
-    // spc::drawDisparos(disparos, window);
-
-    // asteroide1.draw_asteroide();
-    // asteroide1.draw_lines(); // desenha as linhas de trajetoria do asteroide
-
-    glfwSwapBuffers(window);
-}
-
-void runAstrid()
-{
-    initWindow();
-    double lasttime = glfwGetTime();
-    while (running && !glfwWindowShouldClose(window))
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
     {
-        while (glfwGetTime() < lasttime + 1.0 / TARGET_FPS)
-        {
-            // TODO: Put the thread to sleep, yield, or simply do nothing
-        }
-        lasttime += 1.0 / TARGET_FPS;
-        input(window);
-        update(window);
-        drawScene(window);
-    }
-
-    glfwDestroyWindow(window);
-    glfwTerminate();
-}
-
-void update(GLFWwindow *window)
-{
-    // asteroide1.calculo_trajetoria(window);
-    // spc::verificaDisparos(disparos);
-    // ship.updatePosition(window);
-    // if (isAsteroideInsideDisparo(asteroide1, disparos))
-    // {
-    //     std::cout << "Na mosca!" << std::endl;
-    //     asteroide1.reset();
-    // }
-    // if (isAsteroideInsideTerra(asteroide1, space))
-    // {
-    //     std::cout << "Cuidado!!" << std::endl;
-    //     asteroide1.reset();
-    // }
-}
-
-void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
-{
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
-    {
-        double xpos, ypos;
-        glfwGetCursorPos(window, &xpos, &ypos);
-
-        GLdouble modelview[16], projection[16];
-        GLint viewport[4];
-
-        // This code retrieves the current modelview, projection, and viewport matrices
-        // from OpenGL and stores them in the modelview, projection, and viewport arrays.
-        glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
-        glGetDoublev(GL_PROJECTION_MATRIX, projection);
-        glGetIntegerv(GL_VIEWPORT, viewport);
-
-        // This code uses gluUnProject to convert the mouse click coordinates from
-        // screen space to world space. The xpos and ypos parameters are the screen
-        // coordinates of the mouse click, while the modelview, projection, and viewport
-        // parameters are the matrices retrieved in the previous lines. The resulting
-        // world coordinates are stored in the worldX, worldY, and worldZ variables
-        // GLdouble worldX, worldY, worldZ;
-        // gluUnProject(xpos, viewport[3] - ypos, 0.0, modelview, projection, viewport, &worldX, &worldY, &worldZ);
-        // glm::vec2 centerXY(worldX, worldY);
-        // spc::disparo newDisparo(centerXY, std::chrono::steady_clock::now());
-        // std::cout << "x: " << worldX << " y: " << worldY << std::endl;
-        // disparos.push_back(newDisparo);
+        spc::disparar(disparos, camera->getCameraPosition(), camera->getLookPosition());
     }
 }
 
-void aspecRatio(GLFWwindow *window)
+void timerUpdate(int)
 {
-    // Set up the viewport
-    int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
-    glViewport(0, 0, width, height);
+    glutPostRedisplay();
+    planetaTerra->updateRotations(0.1f);
+    spc::verificaDisparos(disparos);
+    spc::verificaAsteroides(asteroides);
+    disparoColideAsteroide(disparos, asteroides);
+    asteroideColidePlaneta(asteroides, planetaTerra);
+    glutTimerFunc(1000 / FPS, timerUpdate, 0);
+}
 
-    // Set up the projection matrix
+void createAsteroid(int)
+{
+    spc::gerarAsteroide(asteroides);
+    glutTimerFunc(2000, createAsteroid, 0);
+}
+
+void timerExplosao(int)
+{
+    spc::verificaExplosao(explosaoAsteroides);
+    glutTimerFunc(1000 / 30, timerExplosao, 0);
+}
+
+void resize_callback(int x, int y)
+{
+    if (y == 0 || x == 0)
+        return;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    float aspectRatio = (float)width / (float)height;
-    float size = 10.0f;
-    if (aspectRatio > 1.0f)
-    {
-        glOrtho(-size * aspectRatio, size * aspectRatio, -size, size, -1.0f, 1.0f);
-    }
-    else
-    {
-        glOrtho(-size, size, -size / aspectRatio, size / aspectRatio, -1.0f, 1.0f);
-    }
-
-    // Switch back to the modelview matrix
+    gluPerspective(50.0, (GLdouble)x / (GLdouble)y, 0.5, 50.0);
     glMatrixMode(GL_MODELVIEW);
+    glViewport(0, 0, x, y);
 }
 
-// bool isAsteroideInsideDisparo(spc::asteroide &asteroide, std::vector<spc::disparo> &disparos)
-// {
-//     glm::vec2 centerXY(asteroide.getX(), asteroide.getY());
-//     for (auto disparo : disparos)
-//     {
-//         float distance = glm::length(centerXY - disparo.getCenter());
-//         if (distance < disparo.getRadius())
-//             return true;
-//     }
-//     return false;
-// }
+void input(unsigned char key, int x, int y)
+{
+    switch (key)
+    {
+    case 27:
+        exit(0);
+        break;
+    case 'f':
+    case 'F':
+        if (fullscreen)
+            glutFullScreen();
+        else
+            glutReshapeWindow(1366, 768);
+        fullscreen = !fullscreen;
+        break;
+    case 'w':
+        // Move forward
+        // std::cout << "w" << std::endl;
+        camera->moveForward();
+        break;
+    case 's':
+        // Move backward
+        // std::cout << "s" << std::endl;
+        camera->moveBackward();
+        break;
+    case 'a':
+        // Strafe left
+        // std::cout << "a" << std::endl;
+        camera->moveLeft();
+        break;
+    case 'd':
+        // Strafe right
+        // std::cout << "d" << std::endl;
+        camera->moveRight();
+        break;
+    case 'q':
+        // Move up
+        // std::cout << "q" << std::endl;
+        camera->moveUp();
+        break;
+    case 'e':
+        // Move down
+        // std::cout << "e" << std::endl;
+        camera->moveDown();
+        break;
+    case 'm':
+        if(mouse){
+            glutSetCursor(GLUT_CURSOR_NONE);
+        }else{
+            glutSetCursor(GLUT_CURSOR_INHERIT);
+        }
+        mouse = !mouse;
+        break;
+    case ';':
+        debug = !debug;
+    default:
+        break;
+    }
+}
 
-// bool isAsteroideInsideTerra(spc::asteroide &asteroide, spc::space &space)
-// {
-//     glm::vec2 centerXY(asteroide.getX(), asteroide.getY());
+void disparoColideAsteroide(std::vector<spc::disparo> &disparos, std::vector<spc::asteroide *> &asteroides)
+{
+    for (auto it = disparos.begin(); it != disparos.end();)
+    {
+        for (auto it2 = asteroides.begin(); it2 != asteroides.end();)
+        {
+            if (it[0].isColliding(it2[0]->getPosition(), it2[0]->getRadius()))
+            {
+                gerarExplosao(explosaoAsteroides, it2[0]->getPosition());
+                it2[0]->setDrawPoint(true);
+                it = disparos.erase(it);
+                it2 = asteroides.erase(it2);
+                // std::cout << "Asteroide atingido" << std::endl;
+            }
+            else
+            {
+                ++it2;
+            }
+        }
+        if (it != disparos.end())
+        {
+            ++it;
+        }
+    }
+}
 
-//     float distance = glm::length(centerXY - space.getTerra().getCenter());
-//     if (distance < space.getTerra().getRadius())
-//         return true;
-
-//     return false;
-// }
+void asteroideColidePlaneta(std::vector<spc::asteroide *> &asteroides, spc::planeta *planetaTerra)
+{
+    for (auto it = asteroides.begin(); it != asteroides.end();)
+    {
+        if (it[0]->isColliding(planetaTerra->getPosition(), planetaTerra->getRadius()))
+        {
+            it[0]->setDrawPoint(true);
+            it = asteroides.erase(it);
+            // std::cout << "Planeta Terra atingido" << std::endl;
+        }
+        else
+        {
+            ++it;
+        }
+    }
+}
