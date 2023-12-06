@@ -24,6 +24,12 @@ namespace spc
             void setPosition(glm::vec3 position){
                 this->position = position;
             }
+            glm::vec3 getPosition(){
+                return position;
+            }
+            bool getDrawpoint(){
+                return drawPoint;
+            }
             bool updatePointStatus();
             void loadGifTexture();
             void drawGif();

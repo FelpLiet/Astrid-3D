@@ -12,6 +12,7 @@ namespace spc
         else
         {
             drawPoint = true;
+            currentFrame++;
             return true;
         }
     }
@@ -56,36 +57,37 @@ namespace spc
         glDisable(GL_TEXTURE_2D);
         glPopMatrix();
         glPopAttrib();
-        currentFrame++;
-        if (currentFrame == maxFrames)
-        {
-            currentFrame = 2;
-            drawPoint = false;
-        }
+        // std::cout << "currentFrame: " << currentFrame << std::endl;
     }
 
     void verificaExplosao(std::vector<spc::animacao *> &explosaoAsteroides)
     {
         for (auto it = explosaoAsteroides.begin(); it != explosaoAsteroides.end();)
         {
-            if (it[0]->updatePointStatus())
+            if ((*it)->updatePointStatus())
             {
-                it = explosaoAsteroides.erase(it);
+                it++;
             }
             else
             {
-                ++it;
+                it = explosaoAsteroides.erase(it);
             }
         }
     }
 
     void drawExplosao(std::vector<spc::animacao *> &explosaoAsteroides)
     {
+        std::cout << "tamanho esplosoes: " << explosaoAsteroides.size() << std::endl;
         for (const auto &explosao : explosaoAsteroides)
         {
             explosao->drawGif();
-            std::cout << "desenhou" << std::endl;
+            if(explosao->getDrawpoint())
+                std::cout << "desenhou" << std::endl;
+            else
+                std::cout << "nao desenhou" << std::endl;
+            //std::cout << "desenhou" << explosao->getPosition().x<< " " << explosao->getPosition().y<< " " << explosao->getPosition().z<< " " << std::endl;
         }
+        
     }
 
     void gerarExplosao(std::vector<spc::animacao *> &explosaoAsteroides, glm::vec3 position)
@@ -93,5 +95,6 @@ namespace spc
         spc::animacao *explosao = new spc::animacao();
         explosao->setPosition(position);
         explosaoAsteroides.push_back(explosao);
+        std::cout << "gerou" << std::endl;
     }
 }

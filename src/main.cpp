@@ -22,6 +22,7 @@ int main(int argc, char **argv)
     glutMouseFunc(mouseButton);
     glutTimerFunc(0, timerUpdate, 0);
     glutTimerFunc(0, createAsteroid, 0);
+    glutTimerFunc(0, timerExplosao, 0);
 
     espaco = new spc::espaco(50.0f, "assets/espaco.jpg");
     planetaTerra = new spc::planeta(glm::vec3(10.0f, 0.0f, -10.0f), 5.0f, "assets/earth.jpg");

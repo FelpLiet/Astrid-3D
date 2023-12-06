@@ -71,6 +71,13 @@ void createAsteroid(int)
     glutTimerFunc(2000, createAsteroid, 0);
 }
 
+void timerExplosao(int)
+{
+    glutPostRedisplay();
+    spc::drawExplosao(explosaoAsteroides);
+    glutTimerFunc(1000 / 15, timerExplosao, 0);
+}
+
 void resize_callback(int x, int y)
 {
     if (y == 0 || x == 0)

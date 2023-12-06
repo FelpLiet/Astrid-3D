@@ -20,6 +20,7 @@
 void drawScene();
 void timerUpdate(int);
 void createAsteroid(int);
+void timerExplosao(int);
 void mouseMotion(int x, int y);
 void mouseButton(int button, int state, int x, int y);
 void resize_callback(int x, int y);
