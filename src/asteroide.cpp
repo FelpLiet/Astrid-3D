@@ -32,7 +32,7 @@ namespace spc
         glm::vec3 posicaoAjustada = position + 0.1f * direction;
         glTranslatef(posicaoAjustada.x, posicaoAjustada.y, posicaoAjustada.z);
         // glutSolidSphere(radius, 20, 20);
-        drawSphere(raio, nStacks, nSectors, texture, pontos, texCoords);
+        drawSphere(radius, nStacks, nSectors, texture, pontos, texCoords);
         glPopMatrix();
         glPopAttrib();
     }

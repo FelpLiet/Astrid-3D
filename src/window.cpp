@@ -6,9 +6,11 @@ extern spc::espaco *espaco;
 extern spc::planeta *planetaTerra;
 extern spc::sol *sol;
 extern spc::camera *camera;
+extern spc::animacao *explosao;
 
 std::vector<spc::disparo> disparos;
 std::vector<spc::asteroide *> asteroides;
+std::vector<spc::animacao *> explosaoAsteroides;
 
 void drawScene()
 {
@@ -26,6 +28,8 @@ void drawScene()
     spc::drawDisparos(disparos);
 
     spc::drawAsteroides(asteroides);
+
+    spc::drawExplosao(explosaoAsteroides);
 
     espaco->draw();
 
@@ -55,6 +59,7 @@ void timerUpdate(int)
     planetaTerra->updateRotations(0.1f);
     spc::verificaDisparos(disparos);
     spc::verificaAsteroides(asteroides);
+    spc::verificaExplosao(explosaoAsteroides);
     disparoColideAsteroide(disparos, asteroides);
     asteroideColidePlaneta(asteroides, planetaTerra);
     glutTimerFunc(1000 / FPS, timerUpdate, 0);
@@ -135,6 +140,7 @@ void input(unsigned char key, int x, int y)
         break;
     }
 }
+
 void disparoColideAsteroide(std::vector<spc::disparo> &disparos, std::vector<spc::asteroide *> &asteroides)
 {
     for (auto it = disparos.begin(); it != disparos.end();)
@@ -143,6 +149,7 @@ void disparoColideAsteroide(std::vector<spc::disparo> &disparos, std::vector<spc
         {
             if (it[0].isColliding(it2[0]->getPosition(), it2[0]->getRadius()))
             {
+                gerarExplosao(explosaoAsteroides, it2[0]->getPosition());
                 it2[0]->setDrawPoint(true);
                 it = disparos.erase(it);
                 it2 = asteroides.erase(it2);

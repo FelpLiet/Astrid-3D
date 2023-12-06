@@ -24,7 +24,6 @@ namespace spc
         GLuint texture;
         GLuint nStacks;
         GLuint nSectors;
-        GLfloat raio;
 
         float deltaTime()
         {

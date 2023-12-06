@@ -111,6 +111,9 @@ namespace spc
         void updateRotations(GLfloat newRotation)
         {
             rotation += newRotation;
+            if(rotation > 360.0f){
+                rotation = 0.0f;
+            }
         }
 
         void draw();
