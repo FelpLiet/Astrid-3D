@@ -24,6 +24,9 @@ int main(int argc, char **argv)
     glutTimerFunc(0, createAsteroid, 0);
     glutTimerFunc(0, timerExplosao, 0);
 
+    glutFullScreen();
+    glutSetCursor(GLUT_CURSOR_NONE);
+
     espaco = new spc::espaco(50.0f, "assets/espaco.jpg");
     planetaTerra = new spc::planeta(glm::vec3(10.0f, 0.0f, -10.0f), 5.0f, "assets/earth.jpg");
     sol = new spc::sol(glm::vec3(10.0f, 10.0f, 10.0f), 0.5f, "assets/sun.jpg");

@@ -13,6 +13,21 @@ namespace spc
         gluLookAt(cameraX, cameraY, cameraZ,                         // Camera position
                   cameraX + lookX, cameraY + lookY, cameraZ + lookZ, // Look at point
                   0.0f, 1.0f, 0.0f);
+
+        std::cout << lookX << " " << lookY << " " << lookZ << std::endl;
+        std::cout << cameraX << " " << cameraY << " " << cameraZ << std::endl;
+        if (cameraX > 16.0f)
+            cameraX = 16.0f;
+        if (cameraX < -16.0f)
+            cameraX = -16.0f;
+        if (cameraZ > 16.0f)
+            cameraZ = 16.0f;
+        if (cameraZ < -16.0f)
+            cameraZ = -16.0f;
+        if(cameraY > 10.0f)
+            cameraY = 10.0f;
+        if(cameraY < -10.0f)
+            cameraY = -10.0f;
     }
 
     void camera::updateCameraLook(GLfloat x, GLfloat y)
@@ -31,26 +46,30 @@ namespace spc
         pitch -= dy * sensitivity;
 
         // Limit pitch and yaw
-        if (debug)
-        {
-            if (pitch > 1.0f)
-                pitch = 1.0f;
-            if (pitch < -1.0f)
-                pitch = -1.0f;
-            if (yaw > 4.0f)
-                yaw = 4.0f;
-            if (yaw < 1.3f)
-                yaw = 1.3f;
-        }else{
-            if (pitch > 1.0f)
-                pitch = 1.0f;
-            if (pitch < -1.0f)
-                pitch = -1.0f;
-            if (yaw > 5.0f)
-                yaw = 4.0f;
-            if (yaw < 0.0f)
-                yaw = 0.0f;
-        }
+        // if (debug)
+        // {
+        //     if (pitch > 1.0f)
+        //         pitch = 1.0f;
+        //     if (pitch < -1.0f)
+        //         pitch = -1.0f;
+        //     if (yaw > 4.0f)
+        //         yaw = 4.0f;
+        //     if (yaw < 1.3f)
+        //         yaw = 1.3f;
+        // }else{
+        if (pitch > 1.0f)
+            pitch = 1.0f;
+        if (pitch < -1.0f)
+            pitch = -1.0f;
+        // Wrap yaw value for smooth 360 degree rotation
+        if (yaw > 2.0f * M_PI)
+            yaw -= 2.0f * M_PI;
+        if (yaw < 0.0f)
+            yaw += 2.0f * M_PI;
+        // }
+
+        std::cout << "pitch: " << pitch << std::endl;
+        std::cout << "yaw: " << yaw << std::endl;
         // Update camera direction
         lookX = cos(yaw) * cos(pitch);
         lookY = sin(pitch);

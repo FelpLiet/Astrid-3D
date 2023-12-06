@@ -1,6 +1,6 @@
 #include "../include/window.hpp"
 
-bool running = true, fullscreen, debug = false;
+bool running = true, fullscreen = true, debug = false, mouse = false;
 
 extern spc::espaco *espaco;
 extern spc::planeta *planetaTerra;
@@ -59,7 +59,6 @@ void timerUpdate(int)
     planetaTerra->updateRotations(0.1f);
     spc::verificaDisparos(disparos);
     spc::verificaAsteroides(asteroides);
-    spc::verificaExplosao(explosaoAsteroides);
     disparoColideAsteroide(disparos, asteroides);
     asteroideColidePlaneta(asteroides, planetaTerra);
     glutTimerFunc(1000 / FPS, timerUpdate, 0);
@@ -73,9 +72,8 @@ void createAsteroid(int)
 
 void timerExplosao(int)
 {
-    glutPostRedisplay();
-    spc::drawExplosao(explosaoAsteroides);
-    glutTimerFunc(1000 / 15, timerExplosao, 0);
+    spc::verificaExplosao(explosaoAsteroides);
+    glutTimerFunc(1000 / 30, timerExplosao, 0);
 }
 
 void resize_callback(int x, int y)
@@ -98,11 +96,11 @@ void input(unsigned char key, int x, int y)
         break;
     case 'f':
     case 'F':
-        fullscreen = !fullscreen;
         if (fullscreen)
             glutFullScreen();
         else
             glutReshapeWindow(1366, 768);
+        fullscreen = !fullscreen;
         break;
     case 'w':
         // Move forward
@@ -135,11 +133,12 @@ void input(unsigned char key, int x, int y)
         camera->moveDown();
         break;
     case 'm':
-        // Lock the mouse to the center of the screen
-        if (glutGet(GLUT_WINDOW_CURSOR) == GLUT_CURSOR_NONE)
-            glutSetCursor(GLUT_CURSOR_INHERIT);
-        else
+        if(mouse){
             glutSetCursor(GLUT_CURSOR_NONE);
+        }else{
+            glutSetCursor(GLUT_CURSOR_INHERIT);
+        }
+        mouse = !mouse;
         break;
     case ';':
         debug = !debug;
