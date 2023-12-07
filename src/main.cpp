@@ -5,6 +5,7 @@ spc::planeta *planetaTerra = nullptr;
 spc::sol *sol = nullptr;
 spc::camera *camera = nullptr;
 spc::animacao *explosao = nullptr;
+spc::canhao *canhao = nullptr;
 
 int main(int argc, char **argv)
 {
@@ -32,6 +33,7 @@ int main(int argc, char **argv)
     sol = new spc::sol(glm::vec3(10.0f, 10.0f, 10.0f), 0.5f, "assets/sun.jpg");
     camera = new spc::camera();
     explosao = new spc::animacao();
+    canhao = new spc::canhao(camera->getCameraPosition(), camera->getLookPosition());
 
     glutMainLoop();
 

@@ -12,6 +12,7 @@
 #include "disparo.hpp"
 #include "asteroide.hpp"
 #include "animacao.hpp"
+#include "cannon.hpp"
 
 #define WIDTH 1366
 #define HEIGHT 768

@@ -7,6 +7,7 @@ extern spc::planeta *planetaTerra;
 extern spc::sol *sol;
 extern spc::camera *camera;
 extern spc::animacao *explosao;
+extern spc::canhao *canhao;
 
 std::vector<spc::disparo> disparos;
 std::vector<spc::asteroide *> asteroides;
@@ -30,6 +31,8 @@ void drawScene()
     spc::drawAsteroides(asteroides);
 
     spc::drawExplosao(explosaoAsteroides);
+
+    canhao->draw();
 
     espaco->draw();
 
@@ -61,6 +64,7 @@ void timerUpdate(int)
     spc::verificaAsteroides(asteroides);
     disparoColideAsteroide(disparos, asteroides);
     asteroideColidePlaneta(asteroides, planetaTerra);
+    canhao->updatePosition(camera->getCameraPosition(), camera->getLookPosition());
     glutTimerFunc(1000 / FPS, timerUpdate, 0);
 }
 
