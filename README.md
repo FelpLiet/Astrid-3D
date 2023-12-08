@@ -1,7 +1,7 @@
 # Astrid-3D
 Finalmente a atualização necessária, a evolução da franquia Astrid. Agora em 3D, com uma jogabilidade mais fluida e uma experiência mais imersiva.
 
-![Logo](assets/LOGO/Astrid Logo_2.gif)
+![Logo](assets/LOGO/astridLogo.gif)
 
 ## Como Jogar
 
