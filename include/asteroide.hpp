@@ -1,6 +1,8 @@
 #pragma once
 
+#include <GL/glew.h>
 #include <GL/glut.h>
+#include <SOIL/SOIL.h>
 #include <glm/glm.hpp>
 #include <vector>
 #include <chrono>
@@ -21,9 +23,15 @@ namespace spc
         std::chrono::steady_clock::time_point pointTimerStart;
         std::vector<std::vector<glm::vec3>> pontos;
         std::vector<std::vector<glm::vec2>> texCoords;
+        glm::vec3 light_specular;
+        glm::vec3 light_diffuse;
+        glm::vec3 light_ambient;
+        glm::vec3 light_position;
         GLuint texture;
         GLuint nStacks;
         GLuint nSectors;
+        GLuint vbo, vao;
+        std::size_t vertexCount = 0;
 
         float deltaTime()
         {
@@ -36,6 +44,8 @@ namespace spc
     public:
         asteroide(const glm::vec3 &newPosition, const glm::vec3 &newDirection)
         {
+            glGenBuffers(1, &vbo);
+            glGenVertexArrays(1, &vao);
             timeCreated = std::chrono::steady_clock::now();
             pointTimerStart = timeCreated;
             lastUpdateTime = timeCreated;
@@ -44,6 +54,10 @@ namespace spc
             radius = 1.0f;
             nStacks = 50;
             nSectors = 50;
+            light_specular = glm::vec3(1.0f, 1.0f, 1.0f);
+            light_diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
+            light_ambient = glm::vec3(0.1f, 0.1f, 0.1f);
+            light_position = glm::vec3(0.0f, 0.0f, 0.0f);
             texture = SOIL_load_OGL_texture("assets/asteroide.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
             if (texture == 0)
             {
@@ -61,6 +75,11 @@ namespace spc
             return radius;
         }
 
+        const std::chrono::steady_clock::time_point &getTimeCreated() const
+        {
+            return timeCreated;
+        }
+
         void setDrawPoint(bool drawPoint)
         {
             this->drawPoint = drawPoint;
@@ -71,17 +90,13 @@ namespace spc
         void updatePointStatus();
         bool isAlive() const;
         bool isColliding(const glm::vec3 &position, float radius) const;
-
-        const std::chrono::steady_clock::time_point &getTimeCreated() const
-        {
-            return timeCreated;
-        }
-
+        void updateVertexBuffer();
+        std::vector<glm::vec3> generateVertexData();
     };
 
-    void verificaAsteroides(std::vector<spc::asteroide*> &asteroides);
+    void verificaAsteroides(std::vector<spc::asteroide *> &asteroides);
 
-    void drawAsteroides(std::vector<spc::asteroide*> &asteroides);
+    void drawAsteroides(std::vector<spc::asteroide *> &asteroides);
 
-    void gerarAsteroide(std::vector<spc::asteroide*> &asteroides);
+    void gerarAsteroide(std::vector<spc::asteroide *> &asteroides);
 }

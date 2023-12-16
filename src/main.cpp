@@ -1,5 +1,6 @@
 #include "../include/window.hpp"
 
+GLuint shaderProgram;
 spc::espaco *espaco = nullptr;
 spc::planeta *planetaTerra = nullptr;
 spc::sol *sol = nullptr;
@@ -14,7 +15,13 @@ int main(int argc, char **argv)
     glutInitWindowPosition(100, 100);
     glutCreateWindow("Astrid");
     glutSetOption(GLUT_MULTISAMPLE, 8);
-
+    glewExperimental = GL_TRUE;
+    if (glewInit() != GLEW_OK)
+    {
+        std::cerr << "Failed to initialize GLEW" << std::endl;
+        return -1;
+    }
+    initShaders(shaderProgram);
     glutDisplayFunc(drawScene);
     glutKeyboardFunc(input);
     glutReshapeFunc(resize_callback);

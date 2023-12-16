@@ -1,7 +1,7 @@
 #include "../include/window.hpp"
 
 bool running = true, fullscreen = true, debug = false, mouse = false;
-
+extern GLuint shaderProgram;
 extern spc::espaco *espaco;
 extern spc::planeta *planetaTerra;
 extern spc::sol *sol;
@@ -189,3 +189,5 @@ void asteroideColidePlaneta(std::vector<spc::asteroide *> &asteroides, spc::plan
         }
     }
 }
+
+

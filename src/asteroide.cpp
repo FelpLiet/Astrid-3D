@@ -1,41 +1,34 @@
 #include "../include/asteroide.hpp"
 
+extern GLuint shaderProgram;
+
 namespace spc
 {
     void asteroide::draw()
-    {
-        glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT);
-        glPushMatrix();
-        glEnable(GL_LIGHTING);
-        glEnable(GL_LIGHT1);
-        GLfloat light_position[] = {10.0, 9.0, 10.0, 1.0};
-        GLfloat light_ambient[] = {0.1, 0.1, 0.1, 1.0};
-        GLfloat light_diffuse[] = {1.5f, 1.5f, 1.5f, 1.0f}; 
-        GLfloat light_specular[] = {2.0f, 2.0f, 2.0f, 1.0f};
-        GLfloat att_constant = 0.2;
-        GLfloat att_linear = 0.1;
-        GLfloat att_quadratic = 0.0;
-        GLfloat spot_direction[] = {0.0, 0.0, 0.0};
-        GLfloat spot_exponent = 0.0;
-        GLfloat spot_cutoff = 180.0;
+{
+    // Use the shader program
+    glUseProgram(shaderProgram);
 
-        glLightfv(GL_LIGHT1, GL_POSITION, light_position);
-        glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
-        glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
-        glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
-        glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, att_constant);
-        glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, att_linear);
-        glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, att_quadratic);
-        glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spot_direction);
-        glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, spot_exponent);
-        glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, spot_cutoff);
-        glm::vec3 posicaoAjustada = position + 0.1f * direction;
-        glTranslatef(posicaoAjustada.x, posicaoAjustada.y, posicaoAjustada.z);
-        // glutSolidSphere(radius, 20, 20);
-        drawSphere(radius, nStacks, nSectors, texture, pontos, texCoords);
-        glPopMatrix();
-        glPopAttrib();
-    }
+    glm::vec3 posicaoAjustada = position + 0.1f * direction;
+
+    // Set the transformation matrix
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), posicaoAjustada);
+    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+    // Set the light parameters
+    glUniform3fv(glGetUniformLocation(shaderProgram, "light.position"), 1, glm::value_ptr(light_position));
+    glUniform3fv(glGetUniformLocation(shaderProgram, "light.ambient"), 1, glm::value_ptr(light_ambient));
+    glUniform3fv(glGetUniformLocation(shaderProgram, "light.diffuse"), 1, glm::value_ptr(light_diffuse));
+    glUniform3fv(glGetUniformLocation(shaderProgram, "light.specular"), 1, glm::value_ptr(light_specular));
+
+    // Draw the VAO
+    glBindVertexArray(vao);
+    glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+    glBindVertexArray(0);
+
+    // Don't forget to reset the shader program
+    glUseProgram(0);
+}
     void asteroide::updatePointStatus()
     {
         auto currentTime = std::chrono::steady_clock::now();
@@ -57,7 +50,56 @@ namespace spc
         return glm::distance(this->position, position) <= this->radius + radius;
     }
 
-    void verificaAsteroides(std::vector<spc::asteroide*> &asteroides)
+    void asteroide::updateVertexBuffer()
+    {
+        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+        std::vector<glm::vec3> vertexData = generateVertexData();
+        vertexCount = vertexData.size();
+
+        glBufferData(GL_ARRAY_BUFFER, vertexData.size() * sizeof(glm::vec3), vertexData.data(), GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+    }
+
+    std::vector<glm::vec3> asteroide::generateVertexData()
+    {
+        std::vector<glm::vec3> vertexData;
+
+        // Define the number of segments and slices to create the sphere
+        int segments = 16;
+        int slices = 16;
+
+        // Generate the vertices for the sphere
+        for (int i = 0; i <= slices; ++i)
+        {
+            float v = i / static_cast<float>(slices);
+            float phi = v * glm::pi<float>();
+
+            for (int j = 0; j <= segments; ++j)
+            {
+                float u = j / static_cast<float>(segments);
+                float theta = u * (glm::pi<float>() * 2);
+
+                // Calculate the vertex position
+                glm::vec3 vertex;
+                vertex.x = std::cos(theta) * std::sin(phi);
+                vertex.y = std::cos(phi);
+                vertex.z = std::sin(theta) * std::sin(phi);
+
+                vertexData.push_back(vertex * radius);
+            }
+        }
+
+        return vertexData;
+    }
+
+    void verificaAsteroides(std::vector<spc::asteroide *> &asteroides)
     {
         for (auto it = asteroides.begin(); it != asteroides.end();)
         {
@@ -73,7 +115,7 @@ namespace spc
         }
     }
 
-    void drawAsteroides(std::vector<spc::asteroide*> &asteroides)
+    void drawAsteroides(std::vector<spc::asteroide *> &asteroides)
     {
         for (auto &asteroide : asteroides)
         {
@@ -81,7 +123,7 @@ namespace spc
         }
     }
 
-    void gerarAsteroide(std::vector<spc::asteroide*> &asteroides)
+    void gerarAsteroide(std::vector<spc::asteroide *> &asteroides)
     {
         // ramdom x position between -16 and 16
         float x = (float)(rand() % 32) - 16.0f;
